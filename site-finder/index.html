@@ -702,6 +702,10 @@ h1{font-size:28px;line-height:1.1} h2{font-size:20px} h3{font-size:15px;text-tra
 @media (max-width:900px){.wrap{grid-template-columns:1fr}}
 header{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:end;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:10px}
 header p{margin:2px 0 0;color:var(--muted);max-width:70ch}
+.toolkit{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toolkit-brand{font:600 15px var(--display);letter-spacing:.06em;text-transform:uppercase}
+.toolnav{display:flex;gap:6px;flex-wrap:wrap}.toolnav a{padding:6px 10px;border:1px solid var(--line);border-radius:4px;text-decoration:none;color:var(--ink)}.toolnav a[aria-current="page"]{background:var(--ink);color:var(--paper)}
+.bridge{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-left:5px solid var(--accent)}.bridge p{margin:2px 0;color:var(--muted)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
 .stack{display:flex;flex-direction:column;gap:12px}
 label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
@@ -786,10 +790,14 @@ a{color:var(--accent)}
 </head>
 <body>
 <div class="wrap">
+  <div class="toolkit">
+    <div class="toolkit-brand">OC Housing Toolkit</div>
+    <nav class="toolnav" aria-label="Housing tools"><a href="./" aria-current="page">1. Find a site</a><a href="../">2. Check ADU fit</a></nav>
+  </div>
   <header>
     <div>
       <h1>OC Site Finder</h1>
-      <p>Public surplus land and Housing Element sites across Orange County, checked against state housing laws, livability and how far each city is behind its housing target.</p>
+      <p><b>Step 1:</b> find promising land across Orange County, then send a Santa Ana site into Billy's Backyard Fit tool to trace the real lot and test one of the city's 10 free ADU plans.</p>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
       <div class="note mono" id="stamp"></div>
@@ -818,13 +826,17 @@ a{color:var(--accent)}
   </aside>
 
   <main class="right">
+    <section class="panel bridge">
+      <div><h2>Site Finder + Backyard Fit</h2><p>Find land here. Select a Santa Ana site. Then click <b>Check ADU fit</b> to open that exact satellite location and test a real pre-approved plan.</p></div>
+      <a class="btn" style="text-decoration:none" href="../">Open Backyard Fit</a>
+    </section>
     <section class="panel">
       <div class="maptools">
         <input type="search" id="q" placeholder="Search address or APN" aria-label="Search sites by address or APN">
         <label><input type="checkbox" id="L-opp" checked> Opportunity shading</label>
         <label><input type="checkbox" id="L-transit"> Transit areas</label>
         <label><input type="checkbox" id="L-flood"> Flood zones</label>
-        <label><input type="checkbox" id="L-photo" checked> Aerial photos when zoomed in</label>
+        <label><input type="checkbox" id="L-photo" checked> Parcel aerials over satellite</label>
       </div>
       <div id="lmap" role="application" aria-label="Map of candidate sites. Drag to pan, scroll or use the buttons to zoom."></div>
       <div class="legend">
@@ -915,6 +927,7 @@ function initMap(){
   }
   LY.transit = D.map.transit && L.geoJSON(D.map.transit, {style:{color:"#2b6cb0", weight:1.5, dashArray:"5 4", fillColor:"#2b6cb0", fillOpacity:.08}});
   LY.flood = D.map.flood && L.geoJSON(D.map.flood, {style:{color:"#2f74c0", weight:.5, fillColor:"#4a90d9", fillOpacity:.35}});
+  LY.sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {maxNativeZoom:19, maxZoom:20, attribution:"Imagery: Esri World Imagery"});
   LY.photos = L.layerGroup().addTo(M);
   LY.sites = L.layerGroup().addTo(M);
   LY.sel = L.layerGroup().addTo(M);
@@ -933,7 +946,9 @@ function initMap(){
 }
 
 function drawPhotos(){
-  const z = M.getZoom();
+  const z = M.getZoom(), lotLevel = z >= 16;
+  if (lotLevel) { LY.sat.addTo(M); LY.opp.remove(); LY.land.remove(); }
+  else { LY.sat.remove(); $("#L-opp").checked ? (LY.land.remove(), LY.opp.addTo(M)) : (LY.opp.remove(), LY.land.addTo(M)); }
   LY.sites.eachLayer(m => { m._r0 = m._r0 || m.getRadius(); m.setRadius(z >= 16 ? 5 : m._r0); m.setStyle({fillOpacity: z >= 16 ? .7 : .95}); });
   LY.photos.clearLayers();
   if (!$("#L-photo").checked || M.getZoom() < 16) return;
