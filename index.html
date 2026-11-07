@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- Handoff contract between OC Site Finder (site-finder/index.html) and Backyard Fit (this page, built from src/santa-ana.html):
+     Site Finder -> Backyard Fit: index.html?site=<id>&name=<site name>&lat=<lat>&lng=<lng>&z=19&lot=<lng,lat;lng,lat;...>
+       lot = the site's outline ring (D.sites[].outline.coordinates[0]) as lng,lat pairs, 6 decimals, ";" between points.
+       A valid lot opens the Satellite tab with that outline already drawn as the traced lot. Missing or bad params: page behaves as before.
+     Backyard Fit -> Site Finder: site-finder/#site=<id> reselects and flies to that site. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -748,6 +753,7 @@ a{color:var(--accent)}
     </div>
 
     <div id="mapWrap">
+      <div id="fromSite" class="muted" style="display:none;margin:0 0 8px;font-size:14px"></div>
       <div class="row" style="margin:0 0 8px"><input id="addr" style="width:260px" placeholder="Street or intersection in Santa Ana"><button class="btn" id="find">Go</button><span class="muted">Use a street or intersection, not someone's home address.</span></div>
       <div style="position:relative">
         <div id="map"></div>
@@ -924,6 +930,24 @@ function checkMap(){
 /* optional ?lat=..&lng=..&z=.. opens the satellite map on a given spot */
 const Q=new URLSearchParams(location.search),qLat=parseFloat(Q.get("lat")),qLng=parseFloat(Q.get("lng")),qZ=parseInt(Q.get("z"),10);
 const START=isFinite(qLat)&&isFinite(qLng)&&Math.abs(qLat)<=90&&Math.abs(qLng)<=180?[qLat,qLng]:null;
+/* optional handoff from Site Finder: ?site=&name=&lot=lng,lat;lng,lat;... (see the contract comment at the top of the file) */
+const qSite=(Q.get("site")||"").trim(),qName=(Q.get("name")||"").trim();
+const LOTQ=(()=>{const raw=Q.get("lot");if(!raw||!START)return null;
+ const pts=raw.split(";").map(t=>t.split(",").map(Number));
+ if(pts.length<3||pts.some(p=>p.length!==2||!p.every(isFinite)||Math.abs(p[0])>180||Math.abs(p[1])>90))return null;
+ const a=pts[0],z=pts[pts.length-1];if(pts.length>3&&a[0]===z[0]&&a[1]===z[1])pts.pop();
+ return pts.length>=3?pts:null})();
+const escH=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function lotFromSiteFinder(){
+ origin=map.getCenter();lot=LOTQ.map(([lng,lat])=>toFt({lat,lng}));house=[];
+ mp.cx=lot.reduce((s,p)=>s+p.x,0)/lot.length;mp.cy=lot.reduce((s,p)=>s+p.y,0)/lot.length;
+ $("traceHouse").disabled=false;$("traceLot").textContent="Adjust the lot";
+ const area=Math.abs(lot.reduce((s,p,i)=>{const q=lot[(i+1)%lot.length];return s+p.x*q.y-q.x*p.y},0)/2);
+ const back="site-finder/"+(qSite?"#site="+encodeURIComponent(qSite):"");
+ $("fromSite").style.display="";
+ $("fromSite").innerHTML=`Lot from Site Finder: <b>${escH(qName||qSite||"selected site")}</b> · about ${Math.round(area).toLocaleString()} sq ft inside its outline (rough). <a id="backSite" href="${escH(back)}">Back to this site</a>`;
+ $("mapNote").textContent="The lot outline came from Site Finder. Drag the ADU and use Turn to line it up. Press Adjust the lot to retrace it by hand, or Trace the house to check overlap.";
+}
 function initMap(){
  if(map)return;
  map=L.map("map",{maxZoom:22,scrollWheelZoom:false}).setView(START||[33.7455,-117.8677],START?(qZ>=1&&qZ<=22?qZ:19):17);
@@ -933,6 +957,7 @@ function initMap(){
  map.on("mousemove",e=>{if(!mdrag)return;const p=toFt(e.latlng);mp.cx=mdrag.cx+p.x-mdrag.s.x;mp.cy=mdrag.cy+p.y-mdrag.s.y;draw()});
  map.on("mouseup",()=>{if(mdrag){mdrag=null;map.dragging.enable()}});
  map.on("click",e=>{if(!tracing)return;if(!origin)origin=map.getCenter();temp.push(toFt(e.latlng));$("finish").disabled=temp.length<3;draw()});
+ if(LOTQ)lotFromSiteFinder();
 }
 function drawMap(){
  if(map&&origin){
