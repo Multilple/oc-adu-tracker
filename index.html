@@ -835,7 +835,8 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.go
 let city=null;
 function renderCities(){
  const n=k=>CITIES.cities.filter(c=>COLOR[c.status]===k).length;
- $("stats").innerHTML=`<div class="stat"><b>${n("g")} / 34</b>cities with usable plans</div><div class="stat"><b>${n("y")}</b>program, plans not confirmed</div><div class="stat"><b>${n("r")}</b>zero plans or nothing found</div><div class="stat"><b>Jan 1, 2025</b>state deadline for every city</div>`;
+ const own=CITIES.cities.filter(c=>c.status==="plans_posted").length,bor=CITIES.cities.filter(c=>c.status==="borrows_other_agency").length;
+ $("stats").innerHTML=`<div class="stat"><b>${own} / 34</b>cities post their own usable plans</div><div class="stat"><b>${bor}</b>accept another agency's plans</div><div class="stat"><b>${n("y")}</b>program, plans not confirmed</div><div class="stat"><b>${n("r")}</b>zero plans or nothing found</div><div class="stat"><b>Jan 1, 2025</b>state deadline for every city</div>`;
  $("cities").innerHTML=CITIES.cities.map((c,i)=>`<div class="city" data-i="${i}"><i class="dot ${COLOR[c.status]}"></i>${esc(c.city)}</div>`).join("");
  document.querySelectorAll(".city").forEach(el=>el.onclick=()=>pickCity(+el.dataset.i));
 }
