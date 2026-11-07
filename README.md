@@ -42,10 +42,7 @@ MIT
 
 ## Demo
 
-Open `index.html` in a browser (or GitHub Pages) for the full version with satellite imagery and address lookup.
-Build it from source with `python3 build.py vendor` (inlines Leaflet 1.9.4, BSD-2, and the city data).
+`index.html` is the presentation demo: **Will a free Santa Ana ADU design fit my backyard?**
+Pick one of Santa Ana's pre-approved designs, drag it around a made-up sample lot, and see green or red against the 4 ft side and rear setback and the house. One file, no internet needed.
 
-Three screens:
-1. **City:** all 34 OC cities, colored by pre-approved plan status.
-2. **Design:** swipe through pre-approved plans (square footage from each agency; footprint shape is assumed and labeled).
-3. **Yard:** trace the lot and house, drag the ADU, and see red or green against a 4 ft side and rear setback. Get a draft site plan.
+`full.html` is the bigger prototype (all 34 cities, satellite map, tracing). Build it with `python3 build.py vendor`.
