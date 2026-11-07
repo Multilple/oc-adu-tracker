@@ -1,5 +1,5 @@
 {
   "private": true,
-  "scripts": {"build": "python3 build.py vendor || python build.py vendor", "test": "node tests/ui.test.js index.html && node tests/map-geometry.test.js index.html"},
+  "scripts": {"build": "python3 build.py vendor || python build.py vendor", "test": "node tests/ui.test.js index.html && node tests/map-geometry.test.js index.html && node tests/url-params.test.js index.html"},
   "devDependencies": {"jsdom": "24.1.3"}
 }
