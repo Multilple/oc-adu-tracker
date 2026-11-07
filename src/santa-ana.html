@@ -6,28 +6,29 @@
 <title>Backyard Fit: Santa Ana</title>
 <style>/*LEAFLET_CSS*/</style>
 <style>
-:root{--bg:#f7f6f2;--card:#fff;--ink:#1d1d1b;--mute:#6b6a65;--line:#e2e0d8;--green:#2e7d4f;--red:#b3402f;--accent:#c96442}
+:root{--bg:#f7f6f2;--card:#fff;--ink:#1d1d1b;--mute:#6b6a65;--line:#e2e0d8;--green:#2e7d4f;--red:#b3402f;--accent:#c96442;--notebg:#fff6e5;--noteline:#f0d9a8;--warnink:#a77712;--ring:#f6d2c3;color-scheme:light}
+:root[data-theme="dark"]{--bg:#15181b;--card:#1f2428;--ink:#e8e6e1;--mute:#a3a09a;--line:#363c42;--green:#4da874;--red:#d06a5a;--accent:#e08662;--notebg:#2b2516;--noteline:#5a4a22;--warnink:#e0b24a;--ring:#5a3a2c;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
 main{max-width:1180px;margin:0 auto;padding:22px 20px}
 h1{margin:0;font-size:28px}
 .sub{color:var(--mute);margin:4px 0 14px;font-size:16px}
-.note{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:14px}
+.note{background:var(--notebg);border:1px solid var(--noteline);border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:14px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
 .step{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
 .groups{display:grid;grid-template-columns:3fr 6fr 1.1fr;gap:12px}
 @media(max-width:980px){.groups{grid-template-columns:1fr}}
 .grp h3{margin:0 0 6px;font-size:14px}
 .grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(94px,1fr))}
-.plan{border:2px solid var(--line);border-radius:10px;padding:0;cursor:pointer;background:#fff;text-align:left;font:inherit;color:inherit;overflow:hidden}
+.plan{border:2px solid var(--line);border-radius:10px;padding:0;cursor:pointer;background:var(--card);text-align:left;font:inherit;color:inherit;overflow:hidden}
 .plan:hover{border-color:#e7b49f}
-.plan.on{border-color:var(--accent);box-shadow:0 0 0 3px #f6d2c3}
+.plan.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
 .plan img{display:block;width:100%;aspect-ratio:240/136;object-fit:cover;background:#eee}
 .plan .t{padding:6px 8px 8px;font-size:13px;line-height:1.3}
 .plan .t b{font-size:14px}
-.sf{font-weight:700}.unk{color:#a77712;font-weight:600}
+.sf{font-weight:700}.unk{color:var(--warnink);font-weight:600}
 .muted{color:var(--mute);font-size:13px}
-.assume{color:#a77712;font-size:12px;font-weight:600}
+.assume{color:var(--warnink);font-size:12px;font-weight:600}
 .wrap{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;margin-top:14px}
 @media(max-width:900px){.wrap{grid-template-columns:1fr}}
 .status{font-size:22px;font-weight:800;color:#fff;border-radius:10px;padding:12px 14px;margin:2px 0 8px}
@@ -37,16 +38,17 @@ ul{margin:4px 0 0;padding-left:20px}li{margin:3px 0}
 #adu{cursor:grab}#adu:active{cursor:grabbing}
 #mapWrap{position:relative;display:none}
 #map{height:calc(100vh - 250px);min-height:420px;border-radius:8px}
-#blocked{display:none;position:absolute;inset:0;z-index:1000;background:rgba(247,246,242,.96);border-radius:8px;padding:28px;text-align:center;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+#blocked{display:none;position:absolute;inset:0;z-index:1000;background:color-mix(in srgb,var(--bg) 96%,transparent);border-radius:8px;padding:28px;text-align:center;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .leaflet-interactive.aduShape{cursor:grab}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:10px}
-.tabs button{border:0;background:#fff;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
-.tabs button.on{background:var(--ink);color:#fff}
-button.btn,a.btn{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+.tabs button{border:0;background:var(--card);color:var(--ink);padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg)}
+button.btn,a.btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
 button.btn:disabled{opacity:.45;cursor:default}
 .go,a.go{background:var(--accent);color:#fff!important;border-color:var(--accent)}
-input{width:70px;border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit}
+input{width:70px;border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit;background:var(--card);color:var(--ink)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 input[type=range]{width:140px;padding:0}
 .placing{font-size:15px;margin-bottom:8px}
 .big{font-size:30px;font-weight:800}
@@ -56,7 +58,7 @@ a{color:var(--accent)}
 </head>
 <body>
 <main>
-<h1>Will a free Santa Ana ADU design fit my backyard?</h1>
+<div class="top"><h1>Will a free Santa Ana ADU design fit my backyard?</h1><button class="btn" id="theme" type="button" aria-label="Switch between light and dark mode">Dark mode</button></div>
 <div class="sub">Santa Ana is one of only 9 Orange County cities that post their own pre-approved ADU designs. Pick one, drop it in a yard, and see if it fits.</div>
 <div class="note"><b>Prototype.</b> Not legal advice, and nothing is sent to the city. Green means it passes our basic checks, not that the city will approve it.</div>
 
@@ -139,6 +141,13 @@ const PLANS=[
  {id:"sa-2b-contemp",bed:"2 Bedroom",style:"Contemporary",by:DPS,sf:null,w:24,l:30},
 ];
 const $=id=>document.getElementById(id);
+(function(){const root=document.documentElement,b=$("theme"),KEY="oc-theme";
+ const cur=()=>root.dataset.theme||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+ const apply=t=>{if(t)root.dataset.theme=t;else delete root.dataset.theme;b.textContent=cur()==="dark"?"Light mode":"Dark mode"};
+ let saved=null;try{saved=localStorage.getItem(KEY)}catch(e){}
+ apply(saved==="dark"||saved==="light"?saved:null);
+ b.onclick=()=>{const t=cur()==="dark"?"light":"dark";apply(t);try{localStorage.setItem(KEY,t)}catch(e){}};
+})();
 let plan=PLANS[7], mode="sample";
 
 /* ---------- step 1: plan picker ---------- */
