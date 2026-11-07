@@ -1,0 +1,312 @@
+{
+  "about": "Pre-approved ADU plan programs in Orange County's 34 cities. AB 1332 (Gov Code 65852.27) required every local agency to have a preapproval program by Jan 1, 2025. has_program stays null until a person checks the city's site and records the URL and date. Never guess.",
+  "law": "https://www.sandag.org/projects-and-programs/regional-initiatives/housing-and-land-use/housing-acceleration-program/-/media/CF0D23A5205A44ABAEA8A4A8BAE45141.ashx",
+  "cities": [
+    {
+      "city": "Aliso Viejo",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Anaheim",
+      "has_program": null,
+      "program_url": "https://www.anaheim.net/6351/Pre-Approved-Plan-Catalogue",
+      "plan_count": 4,
+      "notes": "4 free plans, 224 to 1,199 sf",
+      "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
+      "checked": null
+    },
+    {
+      "city": "Brea",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Buena Park",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Costa Mesa",
+      "has_program": null,
+      "program_url": "https://www.costamesaca.gov/government/departments-and-divisions/economic-and-development-services/planning/accessory-dwelling-units-adu/pre-engineered-adus",
+      "plan_count": null,
+      "notes": "Plans listed as 'coming soon' when the organizers checked; may be stale",
+      "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
+      "checked": null
+    },
+    {
+      "city": "Cypress",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Dana Point",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Fountain Valley",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Fullerton",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Garden Grove",
+      "has_program": null,
+      "program_url": "https://ggcity.org/adu-go",
+      "plan_count": 4,
+      "notes": "ADU Go, 4 free city plans",
+      "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
+      "checked": null
+    },
+    {
+      "city": "Huntington Beach",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Irvine",
+      "has_program": null,
+      "program_url": "https://cityofirvine.gov/building-permits-and-inspections/pre-approved-adu-plans-program",
+      "plan_count": null,
+      "notes": "Plan vendors list; site-specific review still required",
+      "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
+      "checked": null
+    },
+    {
+      "city": "La Habra",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "La Palma",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Laguna Beach",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Laguna Hills",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Laguna Niguel",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Laguna Woods",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Lake Forest",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Los Alamitos",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Mission Viejo",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Newport Beach",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Orange",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Placentia",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Rancho Santa Margarita",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "San Clemente",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "San Juan Capistrano",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Santa Ana",
+      "has_program": null,
+      "program_url": "https://santa-ana.gov/pre-approved-adu-plans/",
+      "plan_count": 10,
+      "notes": "Over the counter, paper only",
+      "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
+      "checked": null
+    },
+    {
+      "city": "Seal Beach",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Stanton",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Tustin",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Villa Park",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Westminster",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    },
+    {
+      "city": "Yorba Linda",
+      "has_program": null,
+      "program_url": null,
+      "plan_count": null,
+      "notes": null,
+      "source": null,
+      "checked": null
+    }
+  ]
+}
