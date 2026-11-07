@@ -872,6 +872,7 @@ a{color:var(--accent)}
         <span><i class="sw" style="background:var(--good);border-radius:50%"></i>Site, likely pathway</span>
         <span><i class="sw" style="background:var(--warn);border-radius:50%"></i>Maybe</span>
         <span><i class="sw" style="background:var(--none);border-radius:50%"></i>No pathway found</span>
+        <span><i class="sw" style="background:transparent;border:3px solid #8b5cf6;border-radius:50%"></i>City has pre-approved ADU plans</span>
         <span><i class="sw" style="background:transparent;border:2px dashed #2b6cb0"></i>Transit area</span>
         <span><i class="sw" style="background:#4a90d9;opacity:.5"></i>Flood zone</span>
       </div>
@@ -934,6 +935,7 @@ function visible(){
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let M = null, LY = {}, markers = new Map(), flyNext = false;
+const PRE_RING = "#8b5cf6"; // ring on sites in cities that post pre-approved ADU plans
 
 function initMap(){
   M = L.map("lmap", {zoomControl:true, preferCanvas:true, minZoom:9, maxZoom:20, zoomSnap:0.5, attributionControl:true});
@@ -990,10 +992,11 @@ function drawMap(rows){
   const col = {likely:css("--good"), maybe:css("--warn"), none:css("--none")};
   LY.sites.clearLayers(); markers.clear();
   rows.forEach(({s}) => {
+    const pre = aduInfo(s.city)?.status === "plans_posted"; // city posts pre-approved ADU plans (AB 1332)
     const m = L.circleMarker([s.lat, s.lon], {pane:"sites", radius: Math.max(5, Math.min(11, 4 + Math.sqrt(s.homes))),
-      color: css("--panel"), weight: 1.5, fillColor: col[statusOf(s)], fillOpacity: .95})
-      .bindTooltip(`<b>${esc(s.name)}</b><br>${esc(s.city)} · ${s.homes ? s.homes + " homes" : "no pathway"}`, {direction:"top"})
-      .on("click", () => { flyNext = false; pick(s.id); });
+      color: pre ? PRE_RING : css("--panel"), weight: pre ? 3 : 1.5, fillColor: col[statusOf(s)], fillOpacity: .95})
+      .bindTooltip(`<b>${esc(s.name)}</b><br>${esc(s.city)} · ${s.homes ? s.homes + " homes" : "no pathway"}${pre ? "<br>City has pre-approved ADU plans" : ""}<br><i>Click to zoom in</i>`, {direction:"top"})
+      .on("click", () => { flyNext = true; pick(s.id); });
     m.addTo(LY.sites); markers.set(s.id, m);
   });
   LY.sel.clearLayers();
@@ -1001,7 +1004,7 @@ function drawMap(rows){
   if (s) {
     L.circleMarker([s.lat, s.lon], {pane:"sites", radius:14, color:css("--ink"), weight:3, fill:false, interactive:false}).addTo(LY.sel);
     if (s.outline) L.geoJSON(s.outline, {pane:"sites", interactive:false, style:{color:"#ffe14d", weight:3, fill:false}}).addTo(LY.sel);
-    if (flyNext) M.flyTo([s.lat, s.lon], Math.max(M.getZoom(), s.aerial ? 17 : 15), {duration:.8});
+    if (flyNext) M.flyTo([s.lat, s.lon], Math.max(M.getZoom(), 18), {duration:.8}); // lot level: satellite shows from 16
   }
   if (fitNext && rows.length) { M.fitBounds(L.latLngBounds(rows.map(r => [r.s.lat, r.s.lon])).pad(0.15), {maxZoom:15}); fitNext = false; }
   flyNext = false;
