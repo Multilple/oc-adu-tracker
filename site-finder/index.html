@@ -791,7 +791,10 @@ a{color:var(--accent)}
       <h1>OC Site Finder</h1>
       <p>Public surplus land and Housing Element sites across Orange County, checked against state housing laws, livability and how far each city is behind its housing target.</p>
     </div>
-    <div class="note mono" id="stamp"></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <div class="note mono" id="stamp"></div>
+      <button class="btn" id="theme" type="button" aria-label="Switch between light and dark mode">Dark mode</button>
+    </div>
   </header>
 
   <aside class="stack">
@@ -1139,7 +1142,17 @@ function render(){
   drawList(rows); drawMap(rows); drawDetail(); drawCities();
 }
 
+function initTheme(){
+  const root = document.documentElement, b = $("#theme"), KEY = "oc-theme";
+  const current = () => root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const apply = t => { if (t) root.dataset.theme = t; else delete root.dataset.theme; b.textContent = current() === "dark" ? "Light mode" : "Dark mode"; };
+  let saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
+  apply(saved === "dark" || saved === "light" ? saved : null);
+  b.onclick = () => { const t = current() === "dark" ? "light" : "dark"; apply(t); try { localStorage.setItem(KEY, t); } catch (e) {} };
+}
+
 function init(){
+  initTheme();
   const cities = [...new Set(D.sites.map(s => s.city))].sort();
   $("#city").innerHTML = `<option value="all">All Orange County</option>` + cities.map(c => `<option${c==="Santa Ana"?" selected":""}>${esc(c)}</option>`).join("");
   ["#w-homes","#w-liv","#w-pres"].forEach(s => $(s).oninput = render);
