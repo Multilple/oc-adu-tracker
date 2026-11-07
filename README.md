@@ -43,6 +43,9 @@ MIT
 ## Demo
 
 `index.html` is the presentation demo: **Will a free Santa Ana ADU design fit my backyard?**
-Pick one of Santa Ana's pre-approved designs, drag it around a made-up sample lot, and see green or red against the 4 ft side and rear setback and the house. One file, no internet needed.
+Pick one of Santa Ana's 10 pre-approved designs, then place it either on a made-up sample lot or on real Esri satellite imagery (trace the lot and house by clicking corners). The ADU turns green or red against the 4 ft side and rear setback and the house.
 
-`full.html` is the bigger prototype (all 34 cities, satellite map, tracing). Build it with `python3 build.py vendor`.
+- Sizes are shown only where Santa Ana's plan title states them (studios 399 sq ft, JGA Craftsman 677 sq ft). Every other size says "Size not listed", and every footprint shape is labeled ASSUMED. You can type a real footprint from the plan sheet.
+- The sample yard works offline. The satellite map needs internet and a host that allows map tiles (GitHub Pages works; sandboxed previews don't, and the page says so).
+
+`full.html` is the bigger prototype (all 34 cities). Build both pages with `python3 build.py vendor`.
