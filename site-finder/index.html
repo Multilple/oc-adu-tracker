@@ -855,7 +855,7 @@ a{color:var(--accent)}
       </div>
       <div id="lmap" role="application" aria-label="Map of candidate sites. Drag to pan, scroll or use the buttons to zoom."></div>
       <div id="adutray" class="adutray" aria-label="Santa Ana pre-approved ADU plans">
-        <div class="adutray-head"><b>Backyard Fit: drag a free Santa Ana ADU plan onto the lot</b> <span class="note">or click a plan to drop it in the middle of the selected lot. Then drag it on the map.</span></div>
+        <div class="adutray-head"><b>Backyard Fit: click a free Santa Ana plan to fill the lot's open area with it</b> <span class="note">Each plan fits a different number of units. Click a unit to remove it. Or drag one plan onto the map to place and move a single ADU.</span></div>
         <div id="aduplans" class="aduplans"></div>
         <div class="adutray-ctl">
           <label>Turn <input type="range" id="adurot" min="0" max="179" value="0" aria-label="Turn the ADU"> <span id="adurotv" class="mono">0°</span></label>
@@ -1263,15 +1263,69 @@ const ADUFIT = (() => {
       const inset = insetPoly(lot, SET);
       if (inset && adu) setbackLine = L.polygon(inset.map(toLL), {pane:"adu", renderer:svgR, interactive:false, color:"#ffe14d", weight:1.5, dashArray:"5 5", fill:false}).addTo(layer);
     }
-    const r = check(), st = $("#adustatus");
+    if (fill && !setbackLine && site && lot.length >= 3) { const inset = insetPoly(lot, SET); if (inset) setbackLine = L.polygon(inset.map(toLL), {pane:"adu", renderer:svgR, interactive:false, color:"#ffe14d", weight:1.5, dashArray:"5 5", fill:false}).addTo(layer); }
+    const r = fill ? fillStatus() : check(), st = $("#adustatus");
     st.textContent = r.text; st.className = "adustatus" + (r.ok === true ? " ok" : r.ok === false ? " bad" : "");
-    $("#aduclear").disabled = !adu;
-    document.querySelectorAll(".aduplan").forEach(b => b.classList.toggle("on", !!adu && b.dataset.plan === adu.id));
+    $("#aduclear").disabled = !adu && !fill;
+    $("#aduclear").textContent = fill ? "Clear units" : "Remove ADU";
+    const cur = adu ? adu.id : fill ? fill.id : null;
+    document.querySelectorAll(".aduplan").forEach(b => b.classList.toggle("on", b.dataset.plan === cur));
+    if (fill) {
+      const p = plan(fill.id);
+      fill.units.forEach((U, k) => L.polygon(U.map(toLL), {pane:"adu", renderer:svgR, color:"#fff", weight:1.5, fillColor:"#2fbf71", fillOpacity:.65, className:"adu-unit"})
+        .bindTooltip(`${esc(label(p))} #${k+1}: click to remove (for example if it sits on a building)`, {direction:"top"})
+        .on("click", e => { if (e.originalEvent) L.DomEvent.stop(e.originalEvent); fill.units.splice(k, 1); draw(); })
+        .addTo(layer));
+      return;
+    }
     if (!adu) return;
     const col = r.ok === false ? "#e5484d" : r.ok === true ? "#2fbf71" : "#9aa5ab";
     const pg = L.polygon(poly().map(toLL), {pane:"adu", renderer:svgR, color:"#fff", weight:2, fillColor:col, fillOpacity:.6, className:"adu-shape"}).addTo(layer);
     pg.bindTooltip(`${esc(label(plan(adu.id)))}: drag to move`, {direction:"top"});
     pg.on("mousedown", e => { if (e.originalEvent) L.DomEvent.stop(e.originalEvent); M.dragging.disable(); const p = toFt(e.latlng); drag = {x:p.x - adu.cx, y:p.y - adu.cy}; });
+  }
+  /* ---- auto-fill: as many copies of the chosen plan as fit in the lot (4 ft from lot lines, GAP between units) ---- */
+  const GAP = 6; // ft between units: ASSUMPTION, confirm building separation with the city
+  const rotP = (p, a) => ({x:p.x*Math.cos(a) - p.y*Math.sin(a), y:p.x*Math.sin(a) + p.y*Math.cos(a)});
+  const areaOf = P => Math.abs(P.reduce((s,p,i) => { const q = P[(i+1)%P.length]; return s + p.x*q.y - q.x*p.y; }, 0) / 2);
+  function longestEdgeAngle(){ let best = 0, a = 0; edges(lot).forEach(([p,q]) => { const d = Math.hypot(q.x-p.x, q.y-p.y); if (d > best) { best = d; a = Math.atan2(q.y-p.y, q.x-p.x); } }); return a; }
+  function pack(p, angle){
+    const Lr = lot.map(q => rotP(q, -angle)), xs = Lr.map(q => q.x), ys = Lr.map(q => q.y);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    let best = [];
+    for (const [w,l] of [[p.w,p.l],[p.l,p.w]]) {
+      const sx = w + GAP, sy = l + GAP;
+      for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+        const out = [];
+        for (let y = y0 + SET + l/2 + j*sy/4; y + l/2 <= y1 - SET + 1e-6; y += sy)
+          for (let x = x0 + SET + w/2 + i*sx/4; x + w/2 <= x1 - SET + 1e-6; x += sx) {
+            const R = [[-w/2,-l/2],[w/2,-l/2],[w/2,l/2],[-w/2,l/2]].map(([dx,dy]) => ({x:x+dx, y:y+dy}));
+            if (R.every(q => inPoly(q, Lr)) && !edgesCross(R, Lr) && minDist(R, Lr) >= SET) out.push(R);
+            if (out.length >= 400) break;
+          }
+        if (out.length > best.length) best = out;
+      }
+    }
+    return best.map(R => R.map(q => rotP(q, angle)));
+  }
+  let fill = null; // {id, units:[[{x,y}x4]], extra}
+  function fillLot(id, extraDeg){
+    const p = plan(id); if (!p || !site || site.city !== "Santa Ana") return 0;
+    adu = null;
+    if (lot.length < 3) { fill = {id, units:[], extra:0}; draw(); return 0; }
+    const base = longestEdgeAngle(), extra = extraDeg ?? +$("#adurot").value;
+    const cands = extraDeg != null || extra ? [base + extra*Math.PI/180] : [base, base + Math.PI/2];
+    let units = []; cands.forEach(a => { const u = pack(p, a); if (u.length > units.length) units = u; });
+    fill = {id, units, extra};
+    if (M && M.getZoom() < 17) M.setView(centroid(), 18, {animate:false});
+    draw(); return units.length;
+  }
+  function fillStatus(){
+    const p = plan(fill.id), n = fill.units.length;
+    if (lot.length < 3) return {ok:null, text:"No parcel outline for this site. Use Open ADU fit full screen to trace the lot by hand."};
+    if (!n) return {ok:false, text:`✗ No ${label(p)} fits inside the 4 ft setback on this lot.`};
+    const each = p.sf || p.w * p.l, total = n * each, pct = Math.round(100 * n * p.w * p.l / areaOf(lot));
+    return {ok:true, text:`✓ ${n} × ${label(p)} fit (${fmt(total)} sq ft of homes, footprints cover ${pct}% of the lot)`};
   }
   function onMove(e){ if (!drag || !adu) return; const p = toFt(e.latlng); adu.cx = p.x - drag.x; adu.cy = p.y - drag.y; draw(); }
   function endDrag(){ if (!drag) return; drag = null; M && M.dragging.enable(); }
@@ -1279,6 +1333,7 @@ const ADUFIT = (() => {
     const p = plan(id); if (!p || !site || site.city !== "Santa Ana") return false;
     const at = latlng || (lot.length >= 3 ? centroid() : L.latLng(site.lat, site.lon));
     const c = toFt(at), rot = adu ? adu.rot : +$("#adurot").value;
+    fill = null;
     adu = {id, w:p.w, l:p.l, rot, cx:c.x, cy:c.y};
     if (M && M.getZoom() < 18) M.setView(at, 19, {animate:false});
     draw();
@@ -1287,20 +1342,20 @@ const ADUFIT = (() => {
   function centroid(){ const P = lot, c = P.reduce((a,p) => ({x:a.x + p.x/P.length, y:a.y + p.y/P.length}), {x:0, y:0}); return toLL(c); }
   function sync(){
     const s = D.sites.find(x => x.id === selected) || null;
-    if (!s || !site || s.id !== site.id) { adu = null; drag = null; }
+    if (!s || !site || s.id !== site.id) { adu = null; fill = null; drag = null; }
     site = s; origin = s ? L.latLng(s.lat, s.lon) : null; lot = s ? (ring(s) || []).map(toFt) : [];
     const sa = !!s && s.city === "Santa Ana";
     document.querySelectorAll(".aduplan").forEach(b => b.disabled = !sa);
     $("#adunote").innerHTML = !s ? "Pick a site first."
       : !sa ? `These are Santa Ana's free plans. Pick a Santa Ana site to drop one on its lot. ${esc(s.city)}: ${aduLine(s.city)}`
-      : `Lot: <b>${esc(s.name)}</b>${lot.length >= 3 ? " (parcel outline from the site data, yellow)" : " (no parcel outline: open full screen to trace it)"}. Checks: inside the lot and 4 ft from side and back lot lines (state ADU law). Not checked: front setback, buildings already on the lot, easements, utilities. Footprints are ASSUMED until checked against the plan sheet. Not legal advice.`;
+      : `Lot: <b>${esc(s.name)}</b>${lot.length >= 3 ? " (parcel outline from the site data, yellow)" : " (no parcel outline: open full screen to trace it)"}. Checks: inside the lot and 4 ft from side and back lot lines (state ADU law). Fill spacing: ${GAP} ft between units (ASSUMPTION). Existing buildings are not removed automatically: click any unit that sits on one. Not checked: front setback, buildings already on the lot, easements, utilities. Footprints are ASSUMED until checked against the plan sheet. Not legal advice.`;
     draw();
   }
   function init(){
     $("#aduplans").innerHTML = PLANS.map(p => `<button type="button" class="aduplan" draggable="true" data-plan="${p.id}" title="${esc(p.bed + " " + p.style + " by " + p.by)}">
       <img src="../assets/${p.id}.jpg" alt="" draggable="false"><b>${esc(p.bed)}</b><br>${esc(p.style)}<br><span class="note">${p.sf ? p.sf + " sq ft" : "size not listed"} · ${p.w}×${p.l} ASSUMED</span></button>`).join("");
     document.querySelectorAll(".aduplan").forEach(b => {
-      b.onclick = () => place(b.dataset.plan);
+      b.onclick = () => fillLot(b.dataset.plan);
       b.ondragstart = e => { e.dataTransfer.setData("text/plain", "adu:" + b.dataset.plan); e.dataTransfer.effectAllowed = "copy"; };
     });
     const mapEl = $("#lmap");
@@ -1311,12 +1366,12 @@ const ADUFIT = (() => {
       const v = e.dataTransfer.getData("text/plain"); if (!v.startsWith("adu:")) return;
       e.preventDefault(); place(v.slice(4), M.mouseEventToLatLng(e));
     });
-    $("#adurot").oninput = () => { $("#adurotv").textContent = $("#adurot").value + "°"; if (adu) { adu.rot = +$("#adurot").value; draw(); } };
-    $("#aduclear").onclick = () => { adu = null; draw(); };
+    $("#adurot").oninput = () => { $("#adurotv").textContent = $("#adurot").value + "°"; if (adu) { adu.rot = +$("#adurot").value; draw(); } else if (fill) fillLot(fill.id, +$("#adurot").value); };
+    $("#aduclear").onclick = () => { adu = null; fill = null; draw(); };
     document.addEventListener("mouseup", endDrag);
   }
   function hookMap(){ M.on("mousemove", onMove); M.on("mouseup", endDrag); M.on("zoomend", draw); }
-  return {init, sync, hookMap, place, check, state: () => ({site: site && site.id, adu, lotPts: lot.length}), move: (dx,dy) => { if (adu) { adu.cx += dx; adu.cy += dy; draw(); } return check(); }};
+  return {init, sync, hookMap, place, check, fillLot, fillInfo: () => fill && {id: fill.id, n: fill.units.length, lotSqft: Math.round(areaOf(lot)), status: fillStatus().text, units: fill.units}, minDistFt: minDist, state: () => ({site: site && site.id, adu, lotPts: lot.length}), move: (dx,dy) => { if (adu) { adu.cx += dx; adu.cy += dy; draw(); } return check(); }};
 })();
 
 function initTheme(){
