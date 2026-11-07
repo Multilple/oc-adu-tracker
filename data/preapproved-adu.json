@@ -9,25 +9,31 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Anaheim",
-      "has_program": null,
+      "has_program": true,
       "program_url": "https://www.anaheim.net/6351/Pre-Approved-Plan-Catalogue",
       "plan_count": 4,
       "notes": "4 free plans, 224 to 1,199 sf",
       "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified"
     },
     {
       "city": "Brea",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://cityofbrea.gov/1802/ADUsJADUs-Pre-Approved-ADU-Plans-Program",
       "plan_count": null,
-      "notes": null,
+      "notes": "Invites designers to get plans approved; plan count not confirmed",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_designer_only",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Buena Park",
@@ -36,34 +42,42 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Costa Mesa",
-      "has_program": null,
+      "has_program": true,
       "program_url": "https://www.costamesaca.gov/government/departments-and-divisions/economic-and-development-services/planning/accessory-dwelling-units-adu/pre-engineered-adus",
       "plan_count": null,
       "notes": "Plans listed as 'coming soon' when the organizers checked; may be stale",
       "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_unclear",
+      "method": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified"
     },
     {
       "city": "Cypress",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://www.cypressca.org/departments/public-works/building-division/preapproved-adu-program",
+      "plan_count": 0,
+      "notes": "Page says no current submissions available",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_no_plans",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Dana Point",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://danapoint.prod.govaccess.org/home/showpublisheddocument/38946/638726136380470000",
       "plan_count": null,
-      "notes": null,
+      "notes": "Pre-approval process document; plan count not confirmed",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_designer_only",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Fountain Valley",
@@ -72,52 +86,64 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Fullerton",
-      "has_program": null,
+      "has_program": false,
       "program_url": null,
       "plan_count": null,
-      "notes": null,
+      "notes": "Contract awarded to RRM Design Group to prepare pre-approved plans (bid record); no public plan page found",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "in_progress",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Garden Grove",
-      "has_program": null,
+      "has_program": true,
       "program_url": "https://ggcity.org/adu-go",
       "plan_count": 4,
-      "notes": "ADU Go, 4 free city plans",
+      "notes": "4 city-owned plans plus non-city plans",
       "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified"
     },
     {
       "city": "Huntington Beach",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://cms3.revize.com/revize/huntingtonbeachca/Documents/Departments/Community%20Development/Building%20Permit%20Application/Huntington%20Beach%20Pre-Approved%20Program%20Brochure.pdf",
+      "plan_count": 1,
+      "notes": "1 free prototype plan in 3 architectural styles",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Irvine",
-      "has_program": null,
+      "has_program": true,
       "program_url": "https://cityofirvine.gov/building-permits-and-inspections/pre-approved-adu-plans-program",
       "plan_count": null,
-      "notes": "Plan vendors list; site-specific review still required",
+      "notes": "Plan vendors list",
       "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_designer_only",
+      "method": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified"
     },
     {
       "city": "La Habra",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://lahabraca.gov/1487/Accessory-Dwelling-Units",
       "plan_count": null,
-      "notes": null,
+      "notes": "City page says County of San Diego pre-approved plans are acceptable",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "borrows_other_agency",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "La Palma",
@@ -126,7 +152,9 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Laguna Beach",
@@ -135,25 +163,31 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Laguna Hills",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://lagunahillsca.gov/599/Pre-Approved-Accessory-Dwelling-Unit-ADU",
+      "plan_count": 3,
+      "notes": "Studio 389 sf, 1BR 499 sf, 2BR 789 sf",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Laguna Niguel",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://cityoflagunaniguel.org/1801/Pre-Approved-ADU-Program",
+      "plan_count": 3,
+      "notes": "350/532/757 sf, each in 3 styles, free",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Laguna Woods",
@@ -162,7 +196,9 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Lake Forest",
@@ -171,16 +207,20 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Los Alamitos",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://cityoflosalamitos.org/738/Pre-Approved-Accessory-Dwelling-Unit-Pla",
+      "plan_count": 2,
+      "notes": "1BR and 2BR options",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Mission Viejo",
@@ -189,16 +229,20 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Newport Beach",
-      "has_program": null,
+      "has_program": true,
       "program_url": null,
       "plan_count": null,
-      "notes": null,
+      "notes": "2022 city ADU guidebook mentions pre-approved plans; current page not confirmed",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_unclear",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Orange",
@@ -207,16 +251,20 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Placentia",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://placentia.org/1134/Preapproved-Accessory-Dwelling-ADU-Plans",
+      "plan_count": 0,
+      "notes": "Page says the city has not taken in any submittals for preapproval",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_no_plans",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Rancho Santa Margarita",
@@ -225,16 +273,20 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "San Clemente",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://www.sanclemente.gov/DocumentCenter/View/691/Pre-approved-ADU-Plans-Program-PDF",
       "plan_count": null,
-      "notes": null,
+      "notes": "Dec 2024 program PDF; plan count not confirmed",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_designer_only",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "San Juan Capistrano",
@@ -243,25 +295,31 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Santa Ana",
-      "has_program": null,
+      "has_program": true,
       "program_url": "https://santa-ana.gov/pre-approved-adu-plans/",
       "plan_count": 10,
       "notes": "Over the counter, paper only",
       "source": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified",
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "Lane 2 DATA-SOURCES.md (organizers), not yet re-verified"
     },
     {
       "city": "Seal Beach",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://sealbeachca.gov/Departments/Community-Development/ADU",
+      "plan_count": 0,
+      "notes": "Page says no current submission available",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_no_plans",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Stanton",
@@ -270,7 +328,9 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Tustin",
@@ -279,7 +339,9 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Villa Park",
@@ -288,25 +350,45 @@
       "plan_count": null,
       "notes": null,
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "not_found",
+      "method": "web search; not yet confirmed by opening the city page"
     },
     {
       "city": "Westminster",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://www.westminster-ca.gov/departments/community-development/planning-division/accessory-dwelling-unit-standard-plan",
       "plan_count": null,
-      "notes": null,
+      "notes": "City-owned standard plans; count not confirmed",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "plans_posted",
+      "method": "web search result from the city's own site"
     },
     {
       "city": "Yorba Linda",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://www.yorbalindaca.gov/931/Preapproved-ADU-Program",
       "plan_count": null,
-      "notes": null,
+      "notes": "Program launched, seeking designer plans; plan count not confirmed",
       "source": null,
-      "checked": null
+      "checked": "2026-11-07",
+      "status": "program_designer_only",
+      "method": "web search result from the city's own site"
     }
-  ]
+  ],
+  "status_key": {
+    "plans_posted": "City posts usable plans",
+    "program_no_plans": "Program page exists, zero plans posted",
+    "program_designer_only": "Program invites designers; plans not confirmed",
+    "program_unclear": "Something exists; needs a manual check",
+    "in_progress": "City is still procuring plans",
+    "borrows_other_agency": "City accepts another agency's plans",
+    "not_found": "Web search found no page. NOT the same as no program. Check manually."
+  },
+  "county_unincorporated": {
+    "url": "https://pwds.oc.gov/service-areas/oc-development-services/planning-development/pre-approved-accessory-dwelling-unit-adu",
+    "plan_count": 6,
+    "note": "County of Orange plans, unincorporated areas only"
+  }
 }
