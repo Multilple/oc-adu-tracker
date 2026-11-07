@@ -4,13 +4,13 @@
   "cities": [
     {
       "city": "Aliso Viejo",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://avcity.org/410/Accessory-Dwelling-Units-ADUs",
       "plan_count": null,
-      "notes": null,
+      "notes": "City accepts County of San Diego and City of Newport Beach pre-approved plans",
       "source": null,
       "checked": "2026-11-07",
-      "status": "not_found",
+      "status": "borrows_other_agency",
       "method": "web search; not yet confirmed by opening the city page"
     },
     {
@@ -40,11 +40,11 @@
       "has_program": null,
       "program_url": null,
       "plan_count": null,
-      "notes": null,
+      "notes": "No pre-approved plan page found. City does offer free CrossBeam Plan PreCheck to applicants",
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Costa Mesa",
@@ -88,7 +88,7 @@
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Fullerton",
@@ -154,17 +154,17 @@
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Laguna Beach",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://www.lagunabeachcity.net/government/departments/community-development/planning/adus-jadus/adu-handbook",
       "plan_count": null,
-      "notes": null,
+      "notes": "2022 SCAG-funded ADU Concept Plans Package; not confirmed as an AB 1332 program",
       "source": null,
       "checked": "2026-11-07",
-      "status": "not_found",
+      "status": "program_unclear",
       "method": "web search; not yet confirmed by opening the city page"
     },
     {
@@ -198,17 +198,17 @@
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Lake Forest",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://www.lakeforestca.gov/services/planning_permits.php",
       "plan_count": null,
-      "notes": null,
+      "notes": "Forms page lists a Pre-Approved ADU Plan Program document; plans not confirmed",
       "source": null,
       "checked": "2026-11-07",
-      "status": "not_found",
+      "status": "program_unclear",
       "method": "web search; not yet confirmed by opening the city page"
     },
     {
@@ -224,13 +224,13 @@
     },
     {
       "city": "Mission Viejo",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://cityofmissionviejo.org/departments/community-development/planning/housing",
       "plan_count": null,
-      "notes": null,
+      "notes": "Housing page lists a pre-approved program and designer-owned plans; count not confirmed",
       "source": null,
       "checked": "2026-11-07",
-      "status": "not_found",
+      "status": "program_designer_only",
       "method": "web search; not yet confirmed by opening the city page"
     },
     {
@@ -253,7 +253,7 @@
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Placentia",
@@ -275,7 +275,7 @@
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "San Clemente",
@@ -290,13 +290,13 @@
     },
     {
       "city": "San Juan Capistrano",
-      "has_program": null,
-      "program_url": null,
-      "plan_count": null,
-      "notes": null,
+      "has_program": true,
+      "program_url": "https://sanjuancapistrano.org/217/Accessory-Junior-Accessory-Dwelling-Unit",
+      "plan_count": 1,
+      "notes": "One prefab plan (BOXABL Studio Casita)",
       "source": null,
       "checked": "2026-11-07",
-      "status": "not_found",
+      "status": "plans_posted",
       "method": "web search; not yet confirmed by opening the city page"
     },
     {
@@ -330,28 +330,28 @@
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Tustin",
       "has_program": null,
-      "program_url": null,
+      "program_url": "https://www.tustinca.org/1378/Accessory-Dwelling-Units",
       "plan_count": null,
-      "notes": null,
+      "notes": "ADU page lists city handbook as 'coming soon'; no pre-approved plans found",
       "source": null,
       "checked": "2026-11-07",
       "status": "not_found",
-      "method": "web search; not yet confirmed by opening the city page"
+      "method": "site-restricted web search of the city's own domain found no pre-approved plan page; confirm by phone or visit"
     },
     {
       "city": "Villa Park",
-      "has_program": null,
-      "program_url": null,
+      "has_program": true,
+      "program_url": "https://villapark.org/Departments/Planning",
       "plan_count": null,
-      "notes": null,
+      "notes": "Council authorized posting the program Dec 2025; designer-submitted plans, count not confirmed",
       "source": null,
       "checked": "2026-11-07",
-      "status": "not_found",
+      "status": "program_designer_only",
       "method": "web search; not yet confirmed by opening the city page"
     },
     {
