@@ -1,0 +1,21 @@
+const {JSDOM}=require("jsdom");const fs=require("fs");
+const html=fs.readFileSync(process.argv[2],"utf8");
+const dom=new JSDOM(html,{runScripts:"dangerously",pretendToBeVisual:true,beforeParse(w){w.Element.prototype.scrollIntoView=()=>{};
+ w.SVGElement.prototype.getScreenCTM=function(){return {inverse:()=>({})}};}});
+const w=dom.window,d=w.document,$=id=>d.getElementById(id);
+const errs=[];w.addEventListener("error",e=>errs.push(e.message));
+setTimeout(()=>{
+ console.log("plans:",d.querySelectorAll(".plan").length,"imgs:",d.querySelectorAll(".plan img").length);
+ console.log("groups:",[...d.querySelectorAll(".grp h3")].map(h=>h.textContent).join(" | "));
+ console.log("placing:",$("placing").textContent);
+ console.log("status:",$("status").textContent,"|",$("why").textContent);
+ d.querySelector('[data-id="sa-2b-contemp"]').click();
+ console.log("after 2br:",$("placing").textContent,"|",$("status").textContent);
+ d.querySelector('[data-id="sa-st-ranch"]').click();
+ console.log("studio:",$("placing").textContent,"|",$("status").textContent,"|",$("why").textContent);
+ $("cw").value=30;$("cl").value=50;$("custom").click();
+ console.log("custom 30x50:",$("placing").textContent,"|",$("status").textContent,"|",$("why").textContent);
+ $("tMap").click();
+ setTimeout(()=>{console.log("map shown:",$("mapWrap").style.display,"status:",$("status").textContent,"|",$("why").textContent,"leaflet:",!!d.querySelector(".leaflet-container"));
+  console.log("errors:",errs);process.exit(0)},300);
+},300);
