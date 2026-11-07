@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backyard Fit: OC pre-approved ADU planner</title>
+<style>/*LEAFLET_CSS*/</style>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#1d1d1b;--mute:#6b6a65;--line:#e2e0d8;--green:#2e7d4f;--yellow:#b7861b;--red:#b3402f;--accent:#c96442}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+header{padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header h1{font-size:18px;margin:0}
+.tag{font-size:12px;color:var(--mute)}
+nav{display:flex;gap:6px;margin-left:auto}
+nav button{border:1px solid var(--line);background:var(--bg);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{padding:18px 20px;max-width:1200px;margin:0 auto}
+.screen{display:none}.screen.on{display:block}
+.banner{background:#fff6e5;border:1px solid #f0d9a8;padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.city{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.city:hover{border-color:var(--ink)}.city.sel{outline:2px solid var(--accent)}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+.g{background:var(--green)}.y{background:var(--yellow)}.r{background:var(--red)}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--mute);margin:8px 0 12px;flex-wrap:wrap}
+.legend span{display:flex;gap:6px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.hero{display:flex;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:12px}.hero .big{font-size:54px;font-weight:800;color:var(--red);line-height:1;white-space:nowrap}.heroT{font-size:20px;font-weight:600;margin-bottom:4px}
+.adu{cursor:move}.streetLbl{background:#1d1d1b;color:#fff;border:0;font-size:12px;padding:2px 8px}.leaflet-tooltip.streetLbl:before{display:none}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{font-size:24px;display:block}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:14px}
+.panel h3{margin:0 0 6px;font-size:16px}
+a{color:var(--accent)}
+.btn{background:var(--ink);color:#fff;border:0;padding:9px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+.btn.alt{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:default}
+.swipe{display:flex;gap:16px;align-items:center;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;width:320px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card h2{margin:4px 0;font-size:20px}
+.muted{color:var(--mute);font-size:13px}
+.assume{color:var(--yellow);font-weight:600;font-size:12px}
+.yard{display:grid;grid-template-columns:1fr 340px;gap:14px}
+@media(max-width:900px){.yard{grid-template-columns:1fr}}
+#map{height:520px;border-radius:10px;border:1px solid var(--line);background:#e9e8e2;
+  background-image:linear-gradient(#d9d7cf 1px,transparent 1px),linear-gradient(90deg,#d9d7cf 1px,transparent 1px);background-size:20px 20px}
+.side .panel{margin-top:0;margin-bottom:10px}
+.status{font-weight:700;font-size:18px;padding:8px 10px;border-radius:8px;color:#fff}
+.status.ok{background:var(--green)}.status.bad{background:var(--red)}.status.wait{background:var(--mute)}
+ul.reasons{margin:8px 0 0;padding-left:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+input[type=text],input[type=number]{border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:14px}
+input[type=number]{width:80px}
+label{font-size:13px}
+#plan svg{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+footer{font-size:12px;color:var(--mute);padding:16px 20px;border-top:1px solid var(--line);max-width:1200px;margin:20px auto 0}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;display:none;z-index:2000}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Backyard Fit</h1><div class="tag">Find a pre-approved ADU design for your Orange County city, then see if it fits your yard.</div></div>
+  <nav>
+    <button data-go="city" class="on">1 · City</button>
+    <button data-go="design">2 · Design</button>
+    <button data-go="yard">3 · Yard</button>
+  </nav>
+</header>
+<main>
+<div class="banner"><b>Prototype.</b> Not legal advice. Nothing here is submitted to any city. Green means it passes our basic checks, not that a city will approve it.</div>
+
+<!-- SCREEN 1 -->
+<section id="city" class="screen on">
+  <div class="hero"><div class="big" id="heroNum"></div><div><div class="heroT">Orange County cities post a pre-approved ADU design a homeowner can actually use.</div><div class="muted">State law (AB 1332) required every city to have a program by January 1, 2025.</div></div></div>
+  <div class="stats" id="stats"></div>
+  <div class="legend">
+    <span><i class="dot g"></i>Usable plans posted (or accepts another agency's)</span>
+    <span><i class="dot y"></i>Program exists, plans not confirmed</span>
+    <span><i class="dot r"></i>Zero plans, or nothing found</span>
+  </div>
+  <div class="grid" id="cities"></div>
+  <div class="panel" id="cityInfo"><span class="muted">Pick a city to see what a homeowner there can use.</span></div>
+</section>
+
+<!-- SCREEN 2 -->
+<section id="design" class="screen">
+  <div class="muted" id="designFor"></div>
+  <div class="swipe">
+    <button class="btn alt" id="prev">← Skip</button>
+    <div class="card" id="card"></div>
+    <button class="btn" id="use">Use this →</button>
+  </div>
+  <div class="panel">
+    <h3>Or enter a plan size yourself</h3>
+    <div class="row"><label>Width (ft) <input type="number" id="cw" value="20"></label><label>Length (ft) <input type="number" id="cl" value="30"></label>
+    <button class="btn alt" id="useCustom">Use custom size</button></div>
+    <div class="muted">Use the footprint from the plan sheet's floor plan.</div>
+  </div>
+</section>
+
+<!-- SCREEN 3 -->
+<section id="yard" class="screen">
+  <div class="yard">
+    <div>
+      <div class="row">
+        <input type="text" id="addr" placeholder="Address (works in the standalone version)" style="flex:1;min-width:220px">
+        <button class="btn alt" id="find">Find</button>
+        <button class="btn" id="sample">Use made-up sample lot</button>
+      </div>
+      <div class="row">
+        <button class="btn alt" id="traceLot">Trace lot</button>
+        <button class="btn alt" id="traceHouse">Trace house</button>
+        <button class="btn" id="finish" disabled>Finish shape</button>
+        <label>Rotate <input type="range" id="rot" min="-90" max="90" value="0"></label>
+      </div>
+      <div id="map"></div>
+      <div class="muted" id="mapNote">Click points to outline a shape, then Finish. Drag the orange box to move the ADU.</div>
+    </div>
+    <div class="side">
+      <div class="panel"><div id="status" class="status wait">Click "Use made-up sample lot" or trace your lot</div><ul class="reasons" id="reasons"></ul>
+        <div class="muted" style="margin-top:8px">Checked: inside the lot, 4 ft side and rear setback, not overlapping the house.<br>Not checked: front setback, easements, utilities, slopes, fire zones, local rules.</div></div>
+      <div class="panel"><h3 id="aduName">No design picked</h3><div class="muted" id="aduDims"></div></div>
+      <div class="panel"><h3>What faster review is worth</h3>
+        <div class="muted">A pre-approved or previously approved plan for a detached ADU gets a 30-day decision clock instead of the usual 60.</div>
+        <div class="row"><label>Monthly carrying cost $ <input type="number" id="carry" value="3000" style="width:100px"></label></div>
+        <div class="assume">ASSUMPTION: replace with the project's real loan, tax and insurance costs.</div>
+        <div style="font-size:20px;font-weight:700;margin-top:6px" id="saved"></div>
+        <div class="muted">Up to 30 fewer days of waiting on the city. Real review times vary.</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="plan"><h3>Draft site plan</h3><div id="planSvg" class="muted">Appears once a lot is traced.</div>
+    <div class="row"><button class="btn alt" id="dl">Download SVG</button><button class="btn alt" id="copy">Copy summary</button></div></div>
+</section>
+</main>
+<footer>
+<b>Sources.</b> City status: our survey of all 34 city websites, checked 2026-11-07 (<a href="https://github.com/Multilple/oc-adu-tracker">data and method</a>); "not found" means we couldn't find a page, not that a city has no program.
+Pre-approved plan program and 30-day clock: AB 1332, Gov Code 65852.27 (<a href="https://www.sandag.org/projects-and-programs/regional-initiatives/housing-and-land-use/housing-acceleration-program/-/media/CF0D23A5205A44ABAEA8A4A8BAE45141.ashx">SANDAG summary</a>). 60-day clock and 4 ft side/rear setback: state ADU law, Gov Code 66310 to 66342 (<a href="https://www.hcd.ca.gov/sites/default/files/docs/policy-and-research/adu-handbook-update.pdf">HCD ADU Handbook, March 2026</a>).
+Plan sizes: <a href="https://cityoflagunaniguel.org/DocumentCenter/View/28678/ADU-Program-Brochure">Laguna Niguel brochure</a>, <a href="https://lagunahillsca.gov/599/Pre-Approved-Accessory-Dwelling-Unit-ADU">Laguna Hills page</a>, <a href="https://ocds.ocpublicworks.com/sites/ocpwocds/files/2024-08/Complete_with_Docusign_2024-06-26_Pre-Approv.pdf">OC County staff report</a>. Imagery: Esri World Imagery. Built at Claude Impact Lab UCI. MIT license.
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>/*LEAFLET_JS*/</script>
+<script>
+const CITIES = /*CITY_DATA*/;
+// Square footage is from each agency's own page. Footprint shape is NOT published there,
+// so width x length below is an assumed rectangle (about 1 : 1.5) with the same area.
+const PLANS = [
+ {id:"ln1",agency:"Laguna Niguel",name:"Plan 1 · Studio",beds:"Studio",baths:"1",sf:350,src:"https://cityoflagunaniguel.org/DocumentCenter/View/28678/ADU-Program-Brochure"},
+ {id:"ln2",agency:"Laguna Niguel",name:"Plan 2 · 1 bed",beds:"1",baths:"1",sf:532,src:"https://cityoflagunaniguel.org/DocumentCenter/View/28678/ADU-Program-Brochure"},
+ {id:"ln3",agency:"Laguna Niguel",name:"Plan 3 · 2 bed",beds:"2",baths:"1",sf:757,src:"https://cityoflagunaniguel.org/DocumentCenter/View/28678/ADU-Program-Brochure"},
+ {id:"lh1",agency:"Laguna Hills",name:"Studio",beds:"Studio",baths:"unknown",sf:389,src:"https://lagunahillsca.gov/599/Pre-Approved-Accessory-Dwelling-Unit-ADU"},
+ {id:"lh2",agency:"Laguna Hills",name:"1 bedroom",beds:"1",baths:"unknown",sf:499,src:"https://lagunahillsca.gov/599/Pre-Approved-Accessory-Dwelling-Unit-ADU"},
+ {id:"lh3",agency:"Laguna Hills",name:"2 bedroom",beds:"2",baths:"unknown",sf:789,src:"https://lagunahillsca.gov/599/Pre-Approved-Accessory-Dwelling-Unit-ADU"},
+ {id:"oc1",agency:"County of Orange",name:"Studio (smallest of 6)",beds:"Studio",baths:"unknown",sf:393,src:"https://ocds.ocpublicworks.com/sites/ocpwocds/files/2024-08/Complete_with_Docusign_2024-06-26_Pre-Approv.pdf",note:"County plans apply in unincorporated OC only, unless a city agrees to accept them."}
+].map(p=>{const w=Math.round(Math.sqrt(p.sf/1.5)*10)/10;return {...p,w,l:Math.round(p.sf/w*10)/10,assumedShape:true}});
+
+const COLOR={plans_posted:"g",borrows_other_agency:"g",program_designer_only:"y",program_unclear:"y",in_progress:"y",program_no_plans:"r",not_found:"r"};
+const LABEL={plans_posted:"Posts usable plans",borrows_other_agency:"Accepts another agency's plans",program_designer_only:"Program invites designers; plans not confirmed",program_unclear:"Something exists; needs a manual check",in_progress:"Still procuring plans",program_no_plans:"Program page, but zero plans posted",not_found:"We found no pre-approved plan page"};
+const $=id=>document.getElementById(id);
+function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",2200)}
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- navigation ---------- */
+function go(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
+ document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===id));
+ if(id==="yard")setTimeout(()=>map.invalidateSize(),50)}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* ---------- screen 1: cities ---------- */
+let city=null;
+function renderCities(){
+ const n=k=>CITIES.cities.filter(c=>COLOR[c.status]===k).length;
+ const own=CITIES.cities.filter(c=>c.status==="plans_posted").length,bor=CITIES.cities.filter(c=>c.status==="borrows_other_agency").length;
+ $("heroNum").textContent=`${own} of 34`;
+ $("stats").innerHTML=`<div class="stat"><b style="color:var(--green)">${own}</b>post their own usable plans</div><div class="stat"><b style="color:var(--green)">${bor}</b>accept another agency's plans</div><div class="stat"><b style="color:var(--yellow)">${n("y")}</b>have a program, plans not confirmed</div><div class="stat"><b style="color:var(--red)">${n("r")}</b>zero plans, or nothing found</div>`;
+ $("cities").innerHTML=CITIES.cities.map((c,i)=>`<div class="city" data-i="${i}"><i class="dot ${COLOR[c.status]}"></i>${esc(c.city)}</div>`).join("");
+ document.querySelectorAll(".city").forEach(el=>el.onclick=()=>pickCity(+el.dataset.i));
+}
+function plansFor(c){
+ const own=PLANS.filter(p=>p.agency===c.city);
+ return own.length?{list:own,own:true}:{list:PLANS,own:false};
+}
+function pickCity(i){
+ city=CITIES.cities[i];
+ document.querySelectorAll(".city").forEach(el=>el.classList.toggle("sel",+el.dataset.i===i));
+ const p=plansFor(city), col=COLOR[city.status];
+ let what;
+ if(p.own) what=`We have ${p.list.length} of ${esc(city.city)}'s plans loaded.`;
+ else if(col==="g") what=`${esc(city.city)} posts plans, but we haven't loaded their sizes yet. Use their link, then enter the size yourself on step 2.`;
+ else what=`No usable plans found for ${esc(city.city)}. Ask the city whether it will accept plans pre-approved by another agency: state law lets a city admit them with the architect's consent. The next step shows other agencies' plans you can bring to that conversation.`;
+ $("cityInfo").innerHTML=`<h3><i class="dot ${col}" style="display:inline-block"></i> ${esc(city.city)}: ${LABEL[city.status]}</h3>
+  <div>${esc(city.notes||"")}</div>
+  ${city.program_url?`<div><a href="${esc(city.program_url)}" target="_blank" rel="noopener">City page</a></div>`:""}
+  <div class="muted">Checked ${esc(city.checked||"")} · ${esc(city.method||"")}</div>
+  <p>${what}</p><button class="btn" id="toDesign">See designs →</button>`;
+ $("toDesign").onclick=()=>{deck=p.list;di=0;renderCard();go("design")};
+ deck=p.list;di=0;renderCard();$("cityInfo").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+/* ---------- screen 2: designs ---------- */
+let deck=PLANS,di=0,chosen=null;
+function footSvg(w,l){const s=120/Math.max(w,l);return `<svg width="200" height="170" viewBox="0 0 200 170"><rect x="${100-w*s/2}" y="${70-l*s/2}" width="${w*s}" height="${l*s}" rx="3" fill="#f6d2c3" stroke="#c96442" stroke-width="2"/><text x="100" y="${70+l*s/2+18}" font-size="13" text-anchor="middle" fill="#1d1d1b">${w} ft × ${l} ft footprint</text></svg>`}
+function renderCard(){
+ const p=deck[di%deck.length];
+ $("designFor").textContent=city?`Designs for ${city.city} (${di%deck.length+1} of ${deck.length})`:`All loaded designs (${di%deck.length+1} of ${deck.length}). Pick a city on step 1 to filter.`;
+ $("card").innerHTML=`<div class="muted">${esc(p.agency)}</div><h2>${esc(p.name)}</h2>
+  <div style="font-size:16px"><b>${p.sf}</b> sq ft · ${p.beds==="Studio"?"Studio":esc(p.beds)+" bed"} · ${esc(p.baths)} bath</div>
+  <div style="text-align:center">${footSvg(p.w,p.l)}</div>
+  <div class="assume">ASSUMED footprint shape (same area). Check the plan sheet.</div>
+  ${p.note?`<div class="muted" style="margin-top:6px">${esc(p.note)}</div>`:""}
+  <div><a href="${esc(p.src)}" target="_blank" rel="noopener">Source</a></div>`;
+}
+$("prev").onclick=()=>{di++;renderCard()};
+$("use").onclick=()=>choose(deck[di%deck.length]);
+$("useCustom").onclick=()=>{const w=+$("cw").value,l=+$("cl").value;if(!(w>0&&l>0))return toast("Enter a width and length");choose({name:"Custom plan",agency:"Entered by you",w,l,sf:Math.round(w*l),assumedShape:false})};
+document.addEventListener("keydown",e=>{if(!$("design").classList.contains("on"))return;if(e.key==="ArrowLeft"){di++;renderCard()}if(e.key==="ArrowRight")choose(deck[di%deck.length])});
+function choose(p){chosen=p;adu.w=p.w;adu.l=p.l;
+ $("aduName").textContent=`${p.name} (${p.agency})`;
+ $("aduDims").innerHTML=`${p.w} ft × ${p.l} ft footprint, ${p.sf} sq ft${p.assumedShape?'<br><span class="assume">Footprint shape assumed from square footage.</span>':""}`;
+ go("yard");if(lot.length)placeAduDefault();draw();toast("Design picked. Drag the orange box.")}
+
+/* ---------- screen 3: map + geometry (all math in feet) ---------- */
+const FT_PER_DEG=364000;
+const map=L.map("map",{zoomControl:true,maxZoom:22,scrollWheelZoom:false}).setView([33.7455,-117.8677],18);
+const sat=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:22,maxNativeZoom:19,attribution:"Imagery © Esri"}).addTo(map);
+let streetAt=null,origin=null,lot=[],house=[],tracing=null,temp=[],layers={},adu={cx:0,cy:0,w:20,l:30,rot:0},drag=null;
+const cosO=()=>Math.cos(origin.lat*Math.PI/180);
+const toFt=ll=>({x:(ll.lng-origin.lng)*FT_PER_DEG*cosO(),y:(ll.lat-origin.lat)*FT_PER_DEG});
+const toLL=p=>L.latLng(origin.lat+p.y/FT_PER_DEG,origin.lng+p.x/(FT_PER_DEG*cosO()));
+function aduPoly(){const {cx,cy,w,l,rot}=adu,a=rot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+ return [[-w/2,-l/2],[w/2,-l/2],[w/2,l/2],[-w/2,l/2]].map(([x,y])=>({x:cx+x*c-y*s,y:cy+x*s+y*c}))}
+function inPoly(p,P){let ins=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const a=P[i],b=P[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)ins=!ins}return ins}
+function cross(a,b,c,d){const o=(p,q,r)=>(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);return o(a,b,c)*o(a,b,d)<0&&o(c,d,a)*o(c,d,b)<0}
+function edges(P){return P.map((p,i)=>[p,P[(i+1)%P.length]])}
+function edgesCross(A,B){return edges(A).some(([a,b])=>edges(B).some(([c,d])=>cross(a,b,c,d)))}
+function dSeg(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1)));return Math.hypot(p.x-a.x-t*dx,p.y-a.y-t*dy)}
+function minDist(A,B){let m=Infinity;for(const p of A)for(const [a,b] of edges(B))m=Math.min(m,dSeg(p,a,b));for(const p of B)for(const [a,b] of edges(A))m=Math.min(m,dSeg(p,a,b));return m}
+function insetPoly(P,d){ // offset a convex polygon inward by d feet; null if not convex
+ const n=P.length;let area=0;for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];area+=a.x*b.y-b.x*a.y}const sg=area>0?1:-1;
+ const lines=P.map((a,i)=>{const b=P[(i+1)%n],dx=b.x-a.x,dy=b.y-a.y,L2=Math.hypot(dx,dy)||1,nx=-dy/L2*sg,ny=dx/L2*sg;return {p:{x:a.x+nx*d,y:a.y+ny*d},v:{x:dx,y:dy}}});
+ const out=[];for(let i=0;i<n;i++){const A=lines[(i+n-1)%n],B=lines[i],den=A.v.x*B.v.y-A.v.y*B.v.x;if(Math.abs(den)<1e-9)return null;const t=((B.p.x-A.p.x)*B.v.y-(B.p.y-A.p.y)*B.v.x)/den;out.push({x:A.p.x+A.v.x*t,y:A.p.y+A.v.y*t})}
+ for(let i=0;i<n;i++){const a=out[i],b=out[(i+1)%n],c=out[(i+2)%n];if(((b.x-a.x)*(c.y-b.y)-(b.y-a.y)*(c.x-b.x))*sg<0)return null}
+ return out}
+function overlap(A,B){return edgesCross(A,B)||A.some(p=>inPoly(p,B))||B.some(p=>inPoly(p,A))}
+
+function check(){
+ const r=[];if(lot.length<3)return {ok:null,r:["Trace your lot (or use the sample lot)."]};
+ if(!chosen)return {ok:null,r:["Pick a design on step 2."]};
+ const A=aduPoly();
+ const inside=A.every(p=>inPoly(p,lot))&&!edgesCross(A,lot);
+ let dLot=null,dHouse=null;
+ if(!inside)r.push("Part of the ADU is outside the lot.");
+ else{dLot=minDist(A,lot);if(dLot<4)r.push(`Only ${dLot.toFixed(1)} ft from a lot line. Side and rear need 4 ft.`)}
+ if(house.length>=3){if(overlap(A,house))r.push("Overlaps the house.");else dHouse=minDist(A,house)}
+ return {ok:r.length===0,r,dLot,dHouse};
+}
+function draw(){
+ if(!origin)return;
+ Object.values(layers).forEach(l=>map.removeLayer(l));layers={};
+ const onSat=map.hasLayer(sat);
+ if(lot.length>=3){layers.lot=L.polygon(lot.map(toLL),{color:onSat?"#ffffff":"#1d1d1b",weight:3,fill:true,fillColor:"#ffffff",fillOpacity:onSat?0:.6}).addTo(map);
+  const inset=insetPoly(lot,4);if(inset)layers.setback=L.polygon(inset.map(toLL),{color:"#2e7d4f",weight:2,dashArray:"5 5",fill:false,interactive:false}).addTo(map);
+  if(streetAt){layers.street=L.tooltip({permanent:true,direction:"center",className:"streetLbl"}).setLatLng(toLL(streetAt)).setContent("Street (front setback: check city rules)").addTo(map)}}
+ if(house.length>=3)layers.house=L.polygon(house.map(toLL),{color:"#555",weight:2,fillColor:"#999",fillOpacity:.5}).addTo(map);
+ if(temp.length)layers.temp=L.polyline(temp.map(toLL),{color:"#ffeb3b",weight:2}).addTo(map);
+ const res=check();
+ if(chosen&&lot.length>=3){
+  layers.adu=L.polygon(aduPoly().map(toLL),{color:res.ok?"#2e7d4f":"#b3402f",weight:3,fillColor:res.ok?"#5fbf87":"#e0705f",fillOpacity:.55,className:"adu"}).addTo(map);
+  layers.adu.on("mousedown",e=>{L.DomEvent.stop(e);map.dragging.disable();drag={s:toFt(e.latlng),cx:adu.cx,cy:adu.cy}});
+ }
+ const st=$("status");
+ if(res.ok===null){st.className="status wait";st.textContent="Not ready yet"}
+ else if(res.ok){st.className="status ok";st.textContent="Fits our basic checks"}
+ else{st.className="status bad";st.textContent="Doesn't fit yet"}
+ const info=[...res.r];if(res.ok){info.push(`${res.dLot.toFixed(1)} ft from the nearest lot line (needs 4).`);if(res.dHouse!=null)info.push(`${res.dHouse.toFixed(1)} ft from the house.`)}
+ $("reasons").innerHTML=info.map(t=>`<li>${esc(t)}</li>`).join("");
+ renderPlan(res);
+}
+map.on("mousemove",e=>{if(!drag)return;const p=toFt(e.latlng);adu.cx=drag.cx+p.x-drag.s.x;adu.cy=drag.cy+p.y-drag.s.y;draw()});
+map.on("mouseup",()=>{if(drag){drag=null;map.dragging.enable()}});
+map.on("click",e=>{if(!tracing)return;if(!origin)origin=map.getCenter();temp.push(toFt(e.latlng));$("finish").disabled=temp.length<3;draw()});
+function startTrace(kind){tracing=kind;temp=[];$("finish").disabled=true;$("mapNote").textContent=`Tracing the ${kind}: click each corner, then Finish shape.`}
+$("traceLot").onclick=()=>startTrace("lot");$("traceHouse").onclick=()=>startTrace("house");
+$("finish").onclick=()=>{if(tracing==="lot"){lot=temp;placeAduDefault()}else house=temp;tracing=null;temp=[];$("finish").disabled=true;$("mapNote").textContent="Drag the box to move the ADU. Use Rotate to turn it.";draw()};
+$("rot").oninput=e=>{adu.rot=+e.target.value;draw()};
+function placeAduDefault(){const cx=lot.reduce((s,p)=>s+p.x,0)/lot.length,ys=lot.map(p=>p.y);adu.cx=cx;adu.cy=Math.max(...ys)-adu.l/2-6}
+$("sample").onclick=()=>{
+ map.removeLayer(sat);origin=map.getCenter();
+ lot=[{x:-25,y:-55},{x:25,y:-55},{x:25,y:55},{x:-25,y:55}];
+ house=[{x:-18,y:-35},{x:18,y:-35},{x:18,y:10},{x:-18,y:10}];streetAt={x:0,y:-61};
+ if(!chosen)choose(PLANS[1]);placeAduDefault();
+ map.fitBounds(L.polygon(lot.map(toLL)).getBounds().pad(.12));
+ $("mapNote").innerHTML="Made-up 50 × 110 ft lot with a 36 × 45 ft house. Street is at the bottom. Satellite view is off so this isn't mistaken for a real property.";draw()};
+$("find").onclick=async()=>{
+ const q=$("addr").value.trim();if(!q)return toast("Type an address");
+ try{const r=await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(q));const j=await r.json();
+  if(!j.length)return toast("Address not found");
+  if(!map.hasLayer(sat))sat.addTo(map);map.setView([+j[0].lat,+j[0].lon],20);origin=null;streetAt=null;lot=[];house=[];draw();startTrace("lot");
+ }catch(e){toast("Address lookup is blocked in this preview. Use the sample lot or the standalone page.")}
+};
+
+/* ---------- site plan ---------- */
+function renderPlan(res){
+ if(lot.length<3){$("planSvg").innerHTML="Appears once a lot is traced.";return}
+ const all=[...lot,...house,...(chosen?aduPoly():[])],xs=all.map(p=>p.x),ys=all.map(p=>p.y);
+ const minX=Math.min(...xs)-15,maxX=Math.max(...xs)+15,minY=Math.min(...ys)-15,maxY=Math.max(...ys)+15;
+ const W=640,s=Math.min((W-40)/(maxX-minX),420/(maxY-minY)),H=(maxY-minY)*s+110;
+ const P=pts=>pts.map(p=>`${20+(p.x-minX)*s},${50+(maxY-p.y)*s}`).join(" ");
+ const col=res.ok?"#2e7d4f":res.ok===false?"#b3402f":"#888";
+ const A=chosen?aduPoly():null,ac=A?A.reduce((q,p)=>({x:q.x+p.x/4,y:q.y+p.y/4}),{x:0,y:0}):null;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="Helvetica,Arial,sans-serif">
+ <rect width="${W}" height="${H}" fill="#fff"/>
+ <text x="20" y="22" font-size="15" font-weight="bold">DRAFT SITE PLAN · ${esc(city?city.city:"City not selected")}</text>
+ <text x="20" y="38" font-size="11" fill="#555">${chosen?esc(chosen.name+" ("+chosen.agency+"), "+chosen.w+" × "+chosen.l+" ft"):"No design picked"}</text>
+ <polygon points="${P(lot)}" fill="none" stroke="#000" stroke-width="1.5" stroke-dasharray="6 3"/>
+ ${house.length>=3?`<polygon points="${P(house)}" fill="#ddd" stroke="#333"/>`:""}
+ ${A?`<polygon points="${P(A)}" fill="${col}" fill-opacity=".25" stroke="${col}" stroke-width="2"/><text x="${20+(ac.x-minX)*s}" y="${50+(maxY-ac.y)*s}" font-size="11" text-anchor="middle">ADU</text>`:""}
+ <g transform="translate(${W-40},70)"><path d="M0 18 L6 0 L12 18 Z" fill="#000"/><text x="6" y="32" font-size="11" text-anchor="middle">N</text></g>
+ <line x1="20" y1="${H-48}" x2="${20+20*s}" y2="${H-48}" stroke="#000" stroke-width="2"/><text x="20" y="${H-36}" font-size="10">20 ft</text>
+ <text x="20" y="${H-20}" font-size="10" fill="#555">Lot traced by hand, approximate. Checked: inside lot, 4 ft side/rear setback, no overlap with house.</text>
+ <text x="20" y="${H-7}" font-size="10" fill="#555">Not checked: front setback, easements, utilities, slopes, fire zones, local rules. Prototype, not for submission.</text>
+ </svg>`;
+ $("planSvg").innerHTML=svg;
+}
+$("dl").onclick=()=>{try{const b=new Blob([$("planSvg").innerHTML],{type:"image/svg+xml"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="draft-site-plan.svg";a.click();toast("Download started (blocked inside some previews)")}catch(e){toast("Downloads are blocked here. Use Copy summary.")}};
+$("copy").onclick=async()=>{const r=check();const t=`Draft site plan (prototype)\nCity: ${city?city.city:"not selected"}\nDesign: ${chosen?chosen.name+" ("+chosen.agency+") "+chosen.w+"x"+chosen.l+" ft":"none"}\nResult: ${r.ok?"fits basic checks":"does not fit yet"}\n${r.r.join("\n")}\nNot checked: front setback, easements, utilities, slopes, fire zones, local rules.`;
+ try{await navigator.clipboard.writeText(t);toast("Copied")}catch(e){toast("Copy blocked here")}};
+function updateSaved(){const c=+$("carry").value||0;$("saved").textContent=`≈ $${Math.round(c*30/30.4).toLocaleString()} saved`}
+$("carry").oninput=updateSaved;updateSaved();
+try{if(window.self!==window.top)$("dl").style.display="none"}catch(e){$("dl").style.display="none"}
+renderCities();renderCard();
+</script>
+</body>
+</html>

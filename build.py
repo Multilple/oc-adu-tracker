@@ -7,17 +7,22 @@ Leaflet and the data are inlined so each page is a single file.
 """
 import json, pathlib, sys
 
+
+def read(p):
+    return pathlib.Path(p).read_text(encoding="utf-8")  # universal newlines, so CRLF checkouts build the same
+
+
 leaf = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "vendor")
-css, js = (leaf / "leaflet.css").read_text(), (leaf / "leaflet.js").read_text()
-cities = json.dumps(json.loads(pathlib.Path("data/preapproved-adu.json").read_text()))
-thumbs = pathlib.Path("assets/thumbs.json").read_text().strip()
+css, js = read(leaf / "leaflet.css"), read(leaf / "leaflet.js")
+cities = json.dumps(json.loads(read("data/preapproved-adu.json")))
+thumbs = read("assets/thumbs.json").strip()
 
 
 def build(src, dst, extra):
-    out = pathlib.Path(src).read_text().replace("/*LEAFLET_CSS*/", css).replace("/*LEAFLET_JS*/", js)
+    out = read(src).replace("/*LEAFLET_CSS*/", css).replace("/*LEAFLET_JS*/", js)
     for k, v in extra.items():
         out = out.replace(k, v)
-    pathlib.Path(dst).write_text(out)
+    pathlib.Path(dst).write_text(out, encoding="utf-8", newline="\n")
     print("wrote", dst, len(out))
 
 
