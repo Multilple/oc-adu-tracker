@@ -41,6 +41,23 @@ not the demo.
 
 **Demo video:** uploaded on the hub.
 
+## How the tools connect
+
+This repo holds two tools that share one data set, `data/preapproved-adu.json` (34 OC cities' AB 1332
+pre-approved ADU plan status, checked Nov 7, 2026):
+
+1. **OC Site Finder** (`site-finder/index.html`) ranks 1,113 public surplus and Housing Element sites
+   across Orange County by homes, livability and city pressure. Its "City pressure" panels now show each
+   city's pre-approved ADU line (for example "10 posted · 30-day review (AB 1332)" or "none found"), linked
+   to the city's program page, and a filter "City has pre-approved ADU plans" narrows the search to the
+   9 cities that post plans.
+2. **Backyard Fit** (root `index.html`) answers the next question for one site: does a free Santa Ana
+   plan fit this lot? Santa Ana sites in Site Finder get a **Check ADU fit** button that opens
+   `index.html?lat=…&lng=…&z=19` on that spot. Other cities with plans show "coming soon".
+
+Site Finder is a single self-contained file with the ADU data embedded as a small script block; nothing
+is fetched at runtime.
+
 ## How Claude is used
 
 - **Building it:** Claude researched all 34 OC cities' pre-approved ADU programs
