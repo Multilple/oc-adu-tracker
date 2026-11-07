@@ -39,3 +39,13 @@ Nobody has checked which of Orange County's 34 cities actually comply.
 ## License
 
 MIT
+
+## Demo
+
+Open `index.html` in a browser (or GitHub Pages) for the full version with satellite imagery and address lookup.
+Build it from source with `python3 build.py vendor` (inlines Leaflet 1.9.4, BSD-2, and the city data).
+
+Three screens:
+1. **City:** all 34 OC cities, colored by pre-approved plan status.
+2. **Design:** swipe through pre-approved plans (square footage from each agency; footprint shape is assumed and labeled).
+3. **Yard:** trace the lot and house, drag the ADU, and see red or green against a 4 ft side and rear setback. Get a draft site plan.
