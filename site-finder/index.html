@@ -804,6 +804,8 @@ a{color:var(--accent)}
         <select id="size"><option value="all">Any size</option><option value="small" selected>Small: 4–30 homes (nonprofit scale)</option><option value="mid">Mid: 31–150 homes</option><option value="large">Large: 150+ homes</option></select></div>
       <div><label for="src">Land source</label>
         <select id="src"><option value="all">All candidate land</option><option value="surplus_land">Public surplus land only</option><option value="housing_element">Housing Element sites only</option><option value="land_use">Vacant lots, parking &amp; faith sites only</option></select></div>
+      <div><label for="adu">ADU plans</label>
+        <select id="adu"><option value="all">Any city</option><option value="posted">City has pre-approved ADU plans</option></select></div>
       <div><label for="w-homes"><span>Weight: homes</span><span id="v-homes" class="mono"></span></label><input type="range" id="w-homes" min="0" max="10" value="4"></div>
       <div><label for="w-liv"><span>Weight: livability</span><span id="v-liv" class="mono"></span></label><input type="range" id="w-liv" min="0" max="10" value="3"></div>
       <div><label for="w-pres"><span>Weight: city pressure</span><span id="v-pres" class="mono"></span></label><input type="range" id="w-pres" min="0" max="10" value="3"></div>
@@ -880,12 +882,13 @@ function score(s){
 }
 
 function visible(){
-  const c = $("#city").value, only = $("#only").value, sz = $("#size").value, src = $("#src").value;
+  const c = $("#city").value, only = $("#only").value, sz = $("#size").value, src = $("#src").value, adu = $("#adu").value;
   const fits = h => sz === "all" || (sz === "small" ? h >= 4 && h <= 30 : sz === "mid" ? h > 30 && h <= 150 : h > 150);
   const q = ($("#q")?.value || "").trim().toLowerCase().replace(/-/g, "");
   return D.sites.filter(s => (!q || (s.name + " " + s.apns.join(" ")).toLowerCase().replace(/-/g, "").includes(q))
     && (c === "all" || s.city === c) && (only === "all" || s.homes > 0)
-    && (only === "all" || fits(s.homes)) && (src === "all" || s.source === src))
+    && (only === "all" || fits(s.homes)) && (src === "all" || s.source === src)
+    && (adu === "all" || aduInfo(s.city)?.status === "plans_posted"))
     .map(s => ({s, sc: score(s)})).sort((a,b) => b.sc - a.sc || b.s.homes - a.s.homes);
 }
 
@@ -966,7 +969,7 @@ function drawList(rows){
       <span class="rank">${i+1}</span>
       <span><b>${esc(r.s.name)}</b><small>${esc(r.s.city)} · ${r.s.acres ? r.s.acres.toFixed(2)+" ac" : "size unknown"} · ${r.s.homes ? r.s.homes+" homes" : "no pathway"}</small></span>
       <span class="score">${r.sc}<small>score</small></span>
-    </button>`).join("") : `<p class="note">No sites match. Try "All surplus sites" or another city.</p>`;
+    </button>`).join("") : `<p class="note">No sites match. Try "All surplus sites", another city, or set ADU plans back to "Any city".</p>`;
   $("#list").querySelectorAll(".site").forEach(b => b.onclick = () => { flyNext = true; pick(b.dataset.id); });
 }
 
@@ -1138,7 +1141,7 @@ function init(){
   const cities = [...new Set(D.sites.map(s => s.city))].sort();
   $("#city").innerHTML = `<option value="all">All Orange County</option>` + cities.map(c => `<option${c==="Santa Ana"?" selected":""}>${esc(c)}</option>`).join("");
   ["#w-homes","#w-liv","#w-pres"].forEach(s => $(s).oninput = render);
-  ["#city","#only","#size","#src"].forEach(s => $(s).oninput = () => { fitNext = true; render(); });
+  ["#city","#only","#size","#src","#adu"].forEach(s => $(s).oninput = () => { fitNext = true; render(); });
   $("#q").oninput = () => { fitNext = true; render(); };
   $("#q").onkeydown = e => { if (e.key === "Enter") { const r = visible()[0]; if (r) { flyNext = true; pick(r.s.id); } } };
   $("#stamp").innerHTML = `${D.sites.length} candidate sites · ${Object.keys(D.cities).length} jurisdictions<br>rules checked ${esc(D.rules.checked)}`;
