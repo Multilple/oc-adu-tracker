@@ -676,10 +676,10 @@ h1{margin:0;font-size:28px}
 .note{background:#fff6e5;border:1px solid #f0d9a8;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:14px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
 .step{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
-.groups{display:grid;grid-template-columns:3fr 6fr 1fr;gap:14px}
+.groups{display:grid;grid-template-columns:3fr 6fr 1.1fr;gap:12px}
 @media(max-width:980px){.groups{grid-template-columns:1fr}}
 .grp h3{margin:0 0 6px;font-size:14px}
-.grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+.grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(94px,1fr))}
 .plan{border:2px solid var(--line);border-radius:10px;padding:0;cursor:pointer;background:#fff;text-align:left;font:inherit;color:inherit;overflow:hidden}
 .plan:hover{border-color:#e7b49f}
 .plan.on{border-color:var(--accent);box-shadow:0 0 0 3px #f6d2c3}
@@ -698,15 +698,15 @@ ul{margin:4px 0 0;padding-left:20px}li{margin:3px 0}
 #adu{cursor:grab}#adu:active{cursor:grabbing}
 #mapWrap{position:relative;display:none}
 #map{height:calc(100vh - 250px);min-height:420px;border-radius:8px}
-#blocked{display:none;position:absolute;inset:0;z-index:1000;background:rgba(247,246,242,.96);border-radius:8px;padding:28px;text-align:center;align-content:center}
+#blocked{display:none;position:absolute;inset:0;z-index:1000;background:rgba(247,246,242,.96);border-radius:8px;padding:28px;text-align:center;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .leaflet-interactive.aduShape{cursor:grab}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:10px}
 .tabs button{border:0;background:#fff;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
 .tabs button.on{background:var(--ink);color:#fff}
-button.btn{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+button.btn,a.btn{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
 button.btn:disabled{opacity:.45;cursor:default}
-button.go{background:var(--accent);color:#fff;border-color:var(--accent)}
+.go,a.go{background:var(--accent);color:#fff!important;border-color:var(--accent)}
 input{width:70px;border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit}
 input[type=range]{width:140px;padding:0}
 .placing{font-size:15px;margin-bottom:8px}
@@ -747,7 +747,7 @@ a{color:var(--accent)}
       <div class="row" style="margin:0 0 8px"><input id="addr" style="width:260px" placeholder="Street or intersection in Santa Ana"><button class="btn" id="find">Go</button><span class="muted">Use a street or intersection, not someone's home address.</span></div>
       <div style="position:relative">
         <div id="map"></div>
-        <div id="blocked"><div style="font-size:18px;font-weight:700;margin-bottom:8px">Satellite tiles can't load in this preview.</div><div class="muted" style="margin-bottom:14px">This page is sandboxed. The same page with live satellite imagery is on the project site.</div><a class="btn go" id="liveLink" target="_blank" rel="noopener" href="https://multilple.github.io/oc-adu-tracker/" style="text-decoration:none;display:inline-block">Open the live map version</a> <button class="btn" id="backSample">Use the sample yard</button></div>
+        <div id="blocked"><div style="font-size:18px;font-weight:700;margin-bottom:8px">Satellite tiles can't load in this preview.</div><div class="muted" style="margin-bottom:14px">This page is sandboxed. The same page with live satellite imagery is on the project site.</div><a class="btn go" id="liveLink" target="_blank" rel="noopener" href="https://multilple.github.io/oc-adu-tracker/" style="text-decoration:none;display:inline-block;margin-bottom:6px">Open the live map version</a><button class="btn" id="backSample">Use the sample yard</button></div>
       </div>
       <div class="row">
         <button class="btn go" id="traceLot">Trace the lot</button>
@@ -915,7 +915,7 @@ function initMap(){
  map=L.map("map",{maxZoom:22,scrollWheelZoom:false}).setView([33.7455,-117.8677],17);
  sat=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:22,maxNativeZoom:19,attribution:"Imagery © Esri"}).addTo(map);
  sat.on("tileload",()=>tileOk++);
- sat.on("tileerror",()=>{tileErr++;if(!tileOk&&tileErr>=3)$("blocked").style.display="grid"});
+ sat.on("tileerror",()=>{tileErr++;if(!tileOk&&tileErr>=3)$("blocked").style.display="flex"});
  map.on("mousemove",e=>{if(!mdrag)return;const p=toFt(e.latlng);mp.cx=mdrag.cx+p.x-mdrag.s.x;mp.cy=mdrag.cy+p.y-mdrag.s.y;draw()});
  map.on("mouseup",()=>{if(mdrag){mdrag=null;map.dragging.enable()}});
  map.on("click",e=>{if(!tracing)return;if(!origin)origin=map.getCenter();temp.push(toFt(e.latlng));$("finish").disabled=temp.length<3;draw()});
