@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!-- Handoff contract between OC Site Finder (this page) and Backyard Fit (../index.html, built from src/santa-ana.html):
+     Site Finder -> Backyard Fit: ../index.html?site=<id>&name=<site name>&lat=<lat>&lng=<lng>&z=19&lot=<lng,lat;lng,lat;...>
+       lot = the site's outline ring (D.sites[].outline.coordinates[0]) as lng,lat pairs, 6 decimals, ";" between points.
+     Backyard Fit -> Site Finder: site-finder/#site=<id> reselects that site here and flies the map to it. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1044,7 +1048,7 @@ function drawDetail(){
           ${pr.behind_pace_homes ? `<b>${fmt(pr.behind_pace_homes)} homes behind pace.</b>` : "On or ahead of pace."} Pressure score <b class="mono">${pr.score}</b>/100.</p>`
           : `<p class="note" style="margin:0">No RHNA row for this place. Land outside a city counts toward the county's target.</p>`}
         <p class="note adu-line" style="margin:0">${aduLine(s.city)}</p>
-        ${s.city === "Santa Ana" ? `<p style="margin:0"><a class="btn" style="display:inline-block;text-decoration:none" target="_blank" rel="noopener" href="../index.html?lat=${(+s.lat).toFixed(6)}&lng=${(+s.lon).toFixed(6)}&z=19">Check ADU fit</a> <span class="note">opens Backyard Fit on this spot: drop one of Santa Ana's 10 free plans on the lot and check 4 ft setbacks</span></p>`
+        ${s.city === "Santa Ana" ? `<p style="margin:0"><a class="btn" style="display:inline-block;text-decoration:none" target="_blank" rel="noopener" href="${esc(aduFitHref(s))}">Check ADU fit</a> <span class="note">${s.outline ? "opens Backyard Fit with this lot outline already drawn: drop one of Santa Ana's 10 free plans on it and check 4 ft setbacks" : "opens Backyard Fit on this spot: trace the lot, then drop one of Santa Ana's 10 free plans on it"}</span></p>`
           : aduInfo(s.city)?.status === "plans_posted" ? `<p class="adu-soon" style="margin:0">ADU fit check for ${esc(s.city)}: coming soon (Santa Ana first)</p>` : ""}
         <h3>Land status</h3>
         ${s.source === "land_use" ? `<p style="margin:0">${esc(s.existing_use)} today, per SCAG's 2024 parcel land use. Owner is not in the free data; check the county Assessor.${s.owner_type === "religious_proxy" ? " If a congregation owns it, SB 4 lets it build affordable homes on its parking or spare land without rezoning." : ""}</p>` : s.source === "housing_element" ? `<p style="margin:0">Listed in ${esc(s.city)}'s Housing Element site inventory${s.he_capacity ? `: <b class="mono">${s.he_capacity.lower}</b> lower-income, <b class="mono">${s.he_capacity.moderate}</b> moderate, <b class="mono">${s.he_capacity.above_moderate}</b> above-moderate homes` : ""}. Owner is not in the free data; check the county Assessor before reaching out.</p>` : `<p style="margin:0">Public surplus land: housing builders get first chance to negotiate under the Surplus Land Act. Notice sent <span class="mono">${esc(s.notice_date || "—")}</span>. Builders have 60 days to respond, then 90 days to negotiate; this notice is past that window, so confirm it is still available. If the agency sells it to someone else, any project of 10+ homes there must keep ${Math.round(D.rules.surplus_land.after_process_affordable_share*100)}% affordable.
@@ -1058,6 +1062,20 @@ function drawDetail(){
   if (s.id !== lastAnimated) { lastAnimated = s.id; requestAnimationFrame(animateAerial); }
 }
 
+function aduFitHref(s){
+  const p = new URLSearchParams({site: s.id, name: s.name, lat: (+s.lat).toFixed(6), lng: (+s.lon).toFixed(6), z: "19"});
+  const ring = s.outline && s.outline.type === "Polygon" && s.outline.coordinates && s.outline.coordinates[0];
+  if (ring && ring.length >= 3) p.set("lot", ring.map(([lng, lat]) => (+lng).toFixed(6) + "," + (+lat).toFixed(6)).join(";"));
+  return "../index.html?" + p.toString();
+}
+function selectFromHash(){
+  const m = /[#&]site=([^&]+)/.exec(location.hash); if (!m) return;
+  const id = decodeURIComponent(m[1]), s = D.sites.find(x => x.id === id); if (!s) return;
+  $("#city").value = s.city;
+  if (!visible().some(r => r.s.id === id)) { $("#only").value = "all"; $("#size").value = "all"; $("#src").value = "all"; $("#adu").value = "all"; }
+  selected = id; fitNext = false; flyNext = false; render();
+  if (M) M.flyTo([s.lat, s.lon], 17, {duration:.8});
+}
 function aduInfo(cityName){ return ADU_BY[String(cityName || "").toUpperCase().replace(/ \(UNINCORPORATED\)$/, "")] || null; }
 function aduLine(cityName){
   const a = aduInfo(cityName), when = "checked Nov 7, 2026";
@@ -1186,6 +1204,8 @@ function init(){
     <li>Price is not shown yet. For public land it's negotiated with the agency; Santa Ana assessed values load from the fetch script.</li></ul>`;
   $("#sources").innerHTML = D.sources.map(s => s.url.startsWith("http") ? `<div><a href="${esc(s.url)}">${esc(s.name)}</a></div>` : `<div>${esc(s.name)}</div>`).join("");
   render();
+  selectFromHash();
+  addEventListener("hashchange", selectFromHash);
 }
 init();
 </script>
