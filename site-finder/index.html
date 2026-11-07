@@ -1021,6 +1021,7 @@ function drawDetail(){
           <p style="margin:0"><b class="mono">${fmt(pr.lower_income_built)}</b> of <b class="mono">${fmt(pr.lower_income_target)}</b> lower-income homes built (${Math.round(pr.lower_income_pct*100)}%) with ${Math.round(pr.cycle_elapsed_pct*100)}% of the cycle gone.
           ${pr.behind_pace_homes ? `<b>${fmt(pr.behind_pace_homes)} homes behind pace.</b>` : "On or ahead of pace."} Pressure score <b class="mono">${pr.score}</b>/100.</p>`
           : `<p class="note" style="margin:0">No RHNA row for this place. Land outside a city counts toward the county's target.</p>`}
+        <p class="note adu-line" style="margin:0">${aduLine(s.city)}</p>
         <h3>Land status</h3>
         ${s.source === "land_use" ? `<p style="margin:0">${esc(s.existing_use)} today, per SCAG's 2024 parcel land use. Owner is not in the free data; check the county Assessor.${s.owner_type === "religious_proxy" ? " If a congregation owns it, SB 4 lets it build affordable homes on its parking or spare land without rezoning." : ""}</p>` : s.source === "housing_element" ? `<p style="margin:0">Listed in ${esc(s.city)}'s Housing Element site inventory${s.he_capacity ? `: <b class="mono">${s.he_capacity.lower}</b> lower-income, <b class="mono">${s.he_capacity.moderate}</b> moderate, <b class="mono">${s.he_capacity.above_moderate}</b> above-moderate homes` : ""}. Owner is not in the free data; check the county Assessor before reaching out.</p>` : `<p style="margin:0">Public surplus land: housing builders get first chance to negotiate under the Surplus Land Act. Notice sent <span class="mono">${esc(s.notice_date || "—")}</span>. Builders have 60 days to respond, then 90 days to negotiate; this notice is past that window, so confirm it is still available. If the agency sells it to someone else, any project of 10+ homes there must keep ${Math.round(D.rules.surplus_land.after_process_affordable_share*100)}% affordable.
         ${s.notice_link ? ` <a href="${esc(s.notice_link)}">Read the notice</a>.` : ""}</p>`}
@@ -1047,7 +1048,7 @@ function drawCities(){
   const city = (D.sites.find(x => x.id === selected) || {}).city?.toUpperCase();
   const rows = Object.entries(D.cities).filter(([,v]) => v.lower_income_pct != null)
     .sort((a,b) => a[1].lower_income_pct - b[1].lower_income_pct);
-  $("#cities").innerHTML = rows.map(([c,v]) => `<span class="${c===city?"me":""}">${esc(c.replace(/\b\w+/g, w => w[0]+w.slice(1).toLowerCase()))}</span>${bar(v.lower_income_pct, v.cycle_elapsed_pct)}<span class="mono">${Math.round(v.lower_income_pct*100)}%</span>`).join("");
+  $("#cities").innerHTML = rows.map(([c,v]) => `<span class="${c===city?"me":""}">${esc(c.replace(/\b\w+/g, w => w[0]+w.slice(1).toLowerCase()))}</span>${bar(v.lower_income_pct, v.cycle_elapsed_pct)}<span class="mono">${Math.round(v.lower_income_pct*100)}%</span><span class="adu">${aduLine(c)}</span>`).join("");
 }
 
 
