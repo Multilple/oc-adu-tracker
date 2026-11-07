@@ -49,6 +49,7 @@ button.btn:disabled{opacity:.45;cursor:default}
 .go,a.go{background:var(--accent);color:#fff!important;border-color:var(--accent)}
 input{width:70px;border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit;background:var(--card);color:var(--ink)}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.toolkit{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.toolkit-brand{font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.toolnav{display:flex;gap:6px}.toolnav a{border:1px solid var(--line);border-radius:8px;padding:6px 10px;text-decoration:none;color:var(--ink)}.toolnav a[aria-current="page"]{background:var(--ink);color:var(--bg)}
 input[type=range]{width:140px;padding:0}
 .placing{font-size:15px;margin-bottom:8px}
 .big{font-size:30px;font-weight:800}
@@ -58,8 +59,9 @@ a{color:var(--accent)}
 </head>
 <body>
 <main>
+<div class="toolkit"><div class="toolkit-brand">OC Housing Toolkit</div><nav class="toolnav" aria-label="Housing tools"><a href="site-finder/">1. Find a site</a><a href="./" aria-current="page">2. Check ADU fit</a></nav></div>
 <div class="top"><h1>Will a free Santa Ana ADU design fit my backyard?</h1><button class="btn" id="theme" type="button" aria-label="Switch between light and dark mode">Dark mode</button></div>
-<div class="sub">Santa Ana is one of only 9 Orange County cities that post their own pre-approved ADU designs. Pick one, drop it in a yard, and see if it fits.</div>
+<div class="sub"><b>Step 2:</b> after finding a site in OC Site Finder, pick one of Santa Ana's 10 free pre-approved ADU designs, trace the real lot on satellite imagery, and see if it clears the basic checks.</div>
 <div class="note"><b>Prototype.</b> Not legal advice, and nothing is sent to the city. Green means it passes our basic checks, not that the city will approve it.</div>
 
 <section class="box">
