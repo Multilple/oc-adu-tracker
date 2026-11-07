@@ -910,9 +910,12 @@ function checkMap(){
  lines.push("Lot lines are traced by eye from imagery, so treat distances as rough.");
  return {ok,lines};
 }
+/* optional ?lat=..&lng=..&z=.. opens the satellite map on a given spot */
+const Q=new URLSearchParams(location.search),qLat=parseFloat(Q.get("lat")),qLng=parseFloat(Q.get("lng")),qZ=parseInt(Q.get("z"),10);
+const START=isFinite(qLat)&&isFinite(qLng)&&Math.abs(qLat)<=90&&Math.abs(qLng)<=180?[qLat,qLng]:null;
 function initMap(){
  if(map)return;
- map=L.map("map",{maxZoom:22,scrollWheelZoom:false}).setView([33.7455,-117.8677],17);
+ map=L.map("map",{maxZoom:22,scrollWheelZoom:false}).setView(START||[33.7455,-117.8677],START?(qZ>=1&&qZ<=22?qZ:19):17);
  sat=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:22,maxNativeZoom:19,attribution:"Imagery © Esri"}).addTo(map);
  sat.on("tileload",()=>tileOk++);
  sat.on("tileerror",()=>{tileErr++;if(!tileOk&&tileErr>=3)$("blocked").style.display="flex"});
@@ -965,6 +968,7 @@ $("tSample").onclick=()=>setMode("sample");$("tMap").onclick=()=>setMode("map");
 function saved(){const c=+$("carry").value||0;$("saved").textContent=`≈ $${Math.round(c*30/30.4).toLocaleString()} less spent waiting`}
 $("carry").oninput=saved;
 renderPlans();placingText();draw();saved();
+if(START)setMode("map");
 </script>
 </body>
 </html>
