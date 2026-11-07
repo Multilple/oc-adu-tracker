@@ -945,7 +945,7 @@ function lotFromSiteFinder(){
  const area=Math.abs(lot.reduce((s,p,i)=>{const q=lot[(i+1)%lot.length];return s+p.x*q.y-q.x*p.y},0)/2);
  const back="site-finder/"+(qSite?"#site="+encodeURIComponent(qSite):"");
  $("fromSite").style.display="";
- $("fromSite").innerHTML=`Lot from Site Finder: <b>${escH(qName||qSite||"selected site")}</b> · about ${Math.round(area).toLocaleString()} sq ft inside its outline (rough). <a id="backSite" href="${escH(back)}">Back to this site</a>`;
+ $("fromSite").innerHTML=`Lot from Site Finder: <b>${escH(qName||qSite||"selected site")}</b> · about ${Math.round(area).toLocaleString()} sq ft inside its outline (rough). <a id="backSite" href="${escH(back)}" target="_top">Back to this site</a>`;
  $("mapNote").textContent="The lot outline came from Site Finder. Drag the ADU and use Turn to line it up. Press Adjust the lot to retrace it by hand, or Trace the house to check overlap.";
 }
 function initMap(){
