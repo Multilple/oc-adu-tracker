@@ -5,7 +5,7 @@
 🏆 **First Place, Claude Impact Lab: UCI × SoCal Affordable Housing (November 7, 2026)**
 
 **Team:** Bagelz
-**Members:** Billy Martinez, Ethan Nguyen, Lucas Jimenez-Suselo, Kevin Bora Cetin, King Michael Vergara
+**Members:** William Martinez, Ethan Nguyen, Lucas Jimenez-Suselo, Kevin Bora Cetin, King Michael Vergara
 **Lanes:** 1 Find it (OC Site Finder) + 2 Clear it (Backyard Fit)
 **Built at:** Paul Merage School of Business, UC Irvine
 
