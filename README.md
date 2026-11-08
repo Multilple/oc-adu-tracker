@@ -2,10 +2,12 @@
 
 > See in 30 seconds if one of Santa Ana's free pre-approved ADU designs fits your backyard.
 
-**Team:** Backyard Fit
-**Members:** Billy Martinez
-**Lane:** 2 Clear it
-**Built at:** Claude Impact Lab: UCI × SoCal Affordable Housing, November 7, 2026
+🏆 **First Place, Claude Impact Lab: UCI × SoCal Affordable Housing (November 7, 2026)**
+
+**Team:** Bagelz
+**Members:** William Martinez, Ethan Nguyen, Lucas Jimenez-Suselo, Kevin Bora Cetin, King Michael Vergara
+**Lanes:** 1 Find it (OC Site Finder) + 2 Clear it (Backyard Fit)
+**Built at:** Paul Merage School of Business, UC Irvine
 
 **Live demo:** <https://multilple.github.io/oc-adu-tracker/>
 
