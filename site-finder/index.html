@@ -1204,24 +1204,29 @@ function render(){
 /* ---------- Backyard Fit inside Site Finder: drag a Santa Ana pre-approved plan onto the selected lot ----------
    Same geometry and 4 ft side/rear setback as Backyard Fit (src/santa-ana.html). Lot = the site's parcel outline. */
 const ADUFIT = (() => {
-  const DPS = "Design Path Studio", JGA = "James Gartner & Associates", FT_PER_DEG = 364000, SET = 4;
-  // sf only where Santa Ana's plan title states it; w x l footprint is an ASSUMPTION until checked against the plan sheet.
+  const DPS = "Design Path Studio", JGA = "James Gartner & Associates", SET = 4;
+  // sf and footprint (outside of walls, ft) from each plan set's title sheet and floor plan sheet
+  // (santa-ana.org/pre-approved-adu-plans, downloaded Nov 8, 2026). Optional porches not included.
   const PLANS = [
-    {id:"sa-st-ranch",bed:"Studio",style:"Ranch",by:DPS,sf:399,w:16,l:25},
-    {id:"sa-st-spanish",bed:"Studio",style:"Spanish",by:DPS,sf:399,w:16,l:25},
-    {id:"sa-st-trad",bed:"Studio",style:"Traditional",by:DPS,sf:399,w:16,l:25},
-    {id:"sa-1b-ranch",bed:"1 Bedroom",style:"Ranch",by:DPS,sf:null,w:20,l:30},
-    {id:"sa-1b-spanish",bed:"1 Bedroom",style:"Spanish",by:DPS,sf:null,w:20,l:30},
-    {id:"sa-1b-trad",bed:"1 Bedroom",style:"Traditional",by:DPS,sf:null,w:20,l:30},
-    {id:"sa-1b-contemp",bed:"1 Bedroom",style:"Contemporary",by:DPS,sf:null,w:20,l:30},
-    {id:"sa-1b-craftsman",bed:"1 Bedroom",style:"Craftsman",by:JGA,sf:677,w:21,l:32},
-    {id:"sa-1b-jga-spanish",bed:"1 Bedroom",style:"Spanish",by:JGA,sf:null,w:20,l:30},
-    {id:"sa-2b-contemp",bed:"2 Bedroom",style:"Contemporary",by:DPS,sf:null,w:24,l:30},
+    {id:"sa-st-ranch",bed:"Studio",style:"Ranch",by:DPS,sf:399,w:17,l:22+8/12},
+    {id:"sa-st-spanish",bed:"Studio",style:"Spanish",by:DPS,sf:399,w:17,l:22+8/12},
+    {id:"sa-st-trad",bed:"Studio",style:"Traditional",by:DPS,sf:399,w:17,l:22+8/12},
+    {id:"sa-1b-ranch",bed:"1 Bedroom",style:"Ranch",by:DPS,sf:499,w:16+4/12,l:30+1/12},
+    {id:"sa-1b-spanish",bed:"1 Bedroom",style:"Spanish",by:DPS,sf:499,w:16+4/12,l:30+1/12},
+    {id:"sa-1b-trad",bed:"1 Bedroom",style:"Traditional",by:DPS,sf:499,w:16+4/12,l:30+1/12},
+    {id:"sa-1b-contemp",bed:"1 Bedroom",style:"Contemporary",by:DPS,sf:625,w:16+10/12,l:36+7/12},
+    {id:"sa-1b-craftsman",bed:"1 Bedroom",style:"Craftsman",by:JGA,sf:677,w:25,l:28},
+    {id:"sa-1b-jga-spanish",bed:"1 Bedroom",style:"Spanish",by:JGA,sf:677,w:25,l:34},
+    {id:"sa-2b-contemp",bed:"2 Bedroom",style:"Contemporary",by:DPS,sf:749,w:16+10/12,l:43+10/12},
   ];
+  const fi = ft => { const t = Math.round(ft * 12), f = Math.floor(t / 12), i = t % 12; return i ? `${f}′-${i}″` : `${f}′`; };
   let site = null, origin = null, lot = [], adu = null, layer = null, setbackLine = null, drag = null, svgR = null;
-  const cosO = () => Math.cos(origin.lat * Math.PI / 180);
-  const toFt = ll => ({x:(ll.lng - origin.lng) * FT_PER_DEG * cosO(), y:(ll.lat - origin.lat) * FT_PER_DEG});
-  const toLL = p => L.latLng(origin.lat + p.y / FT_PER_DEG, origin.lng + p.x / (FT_PER_DEG * cosO()));
+  // feet per degree at the lot's latitude (WGS84 ellipsoid series)
+  const rad = () => origin.lat * Math.PI / 180, M2FT = 1 / 0.3048;
+  const ftLat = () => (111132.92 - 559.82 * Math.cos(2 * rad()) + 1.175 * Math.cos(4 * rad())) * M2FT;
+  const ftLng = () => (111412.84 * Math.cos(rad()) - 93.5 * Math.cos(3 * rad())) * M2FT;
+  const toFt = ll => ({x:(ll.lng - origin.lng) * ftLng(), y:(ll.lat - origin.lat) * ftLat()});
+  const toLL = p => L.latLng(origin.lat + p.y / ftLat(), origin.lng + p.x / ftLng());
   function poly(){ const {cx,cy,w,l,rot} = adu, a = rot * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
     return [[-w/2,-l/2],[w/2,-l/2],[w/2,l/2],[-w/2,l/2]].map(([x,y]) => ({x:cx + x*c - y*s, y:cy + x*s + y*c})); }
   function inPoly(p,P){ let ins = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a.y > p.y) !== (b.y > p.y) && p.x < (b.x-a.x)*(p.y-a.y)/(b.y-a.y) + a.x) ins = !ins; } return ins; }
@@ -1285,7 +1290,7 @@ const ADUFIT = (() => {
     pg.on("mousedown", e => { if (e.originalEvent) L.DomEvent.stop(e.originalEvent); M.dragging.disable(); const p = toFt(e.latlng); drag = {x:p.x - adu.cx, y:p.y - adu.cy}; });
   }
   /* ---- auto-fill: as many copies of the chosen plan as fit in the lot (4 ft from lot lines, GAP between units) ---- */
-  const GAP = 6; // ft between units: ASSUMPTION, confirm building separation with the city
+  const GAP = 5; // ft between detached ADU and other accessory buildings: Santa Ana Municipal Code Table 41-194.3
   const rotP = (p, a) => ({x:p.x*Math.cos(a) - p.y*Math.sin(a), y:p.x*Math.sin(a) + p.y*Math.cos(a)});
   const areaOf = P => Math.abs(P.reduce((s,p,i) => { const q = P[(i+1)%P.length]; return s + p.x*q.y - q.x*p.y; }, 0) / 2);
   function longestEdgeAngle(){ let best = 0, a = 0; edges(lot).forEach(([p,q]) => { const d = Math.hypot(q.x-p.x, q.y-p.y); if (d > best) { best = d; a = Math.atan2(q.y-p.y, q.x-p.x); } }); return a; }
@@ -1348,12 +1353,12 @@ const ADUFIT = (() => {
     document.querySelectorAll(".aduplan").forEach(b => b.disabled = !sa);
     $("#adunote").innerHTML = !s ? "Pick a site first."
       : !sa ? `These are Santa Ana's free plans. Pick a Santa Ana site to drop one on its lot. ${esc(s.city)}: ${aduLine(s.city)}`
-      : `Lot: <b>${esc(s.name)}</b>${lot.length >= 3 ? " (parcel outline from the site data, yellow)" : " (no parcel outline: open full screen to trace it)"}. Checks: inside the lot and 4 ft from side and back lot lines (state ADU law). Fill spacing: ${GAP} ft between units (ASSUMPTION). Existing buildings are not removed automatically: click any unit that sits on one. Not checked: front setback, buildings already on the lot, easements, utilities. Footprints are ASSUMED until checked against the plan sheet. Not legal advice.`;
+      : `Lot: <b>${esc(s.name)}</b>${lot.length >= 3 ? " (parcel outline from the site data, yellow)" : " (no parcel outline: open full screen to trace it)"}. Checks: inside the lot and 4 ft from side and back lot lines (state ADU law). Fill spacing: ${GAP} ft between units (Santa Ana Table 41-194.3). Existing buildings are not removed automatically: click any unit that sits on one. Not checked: front setback, buildings already on the lot, easements, utilities. Footprints are from the city plan sets, porches not included. Not legal advice.`;
     draw();
   }
   function init(){
     $("#aduplans").innerHTML = PLANS.map(p => `<button type="button" class="aduplan" draggable="true" data-plan="${p.id}" title="${esc(p.bed + " " + p.style + " by " + p.by)}">
-      <img src="../assets/${p.id}.jpg" alt="" draggable="false"><b>${esc(p.bed)}</b><br>${esc(p.style)}<br><span class="note">${p.sf ? p.sf + " sq ft" : "size not listed"} · ${p.w}×${p.l} ASSUMED</span></button>`).join("");
+      <img src="../assets/${p.id}.jpg" alt="" draggable="false"><b>${esc(p.bed)}</b><br>${esc(p.style)}<br><span class="note">${p.sf} sq ft · ${fi(p.w)}×${fi(p.l)}</span></button>`).join("");
     document.querySelectorAll(".aduplan").forEach(b => {
       b.onclick = () => fillLot(b.dataset.plan);
       b.ondragstart = e => { e.dataTransfer.setData("text/plain", "adu:" + b.dataset.plan); e.dataTransfer.effectAllowed = "copy"; };

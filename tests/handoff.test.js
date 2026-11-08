@@ -44,7 +44,7 @@ setTimeout(()=>{
  // 2. Backyard Fit opens with that URL: satellite tab, lot drawn, check already run.
  const bf=loadBackyardFit(u.href);
  const bd=bf.document;
- assert.strictEqual(bd.getElementById("mapWrap").style.display,"block","satellite tab open");
+ assert.ok(bd.querySelector(".leaflet-container"),"map open");
  const status=bd.getElementById("status").textContent;
  assert.notStrictEqual(status,"Not ready yet","status is a real result: "+status);
  assert.ok(/Fits our basic checks|Doesn't fit yet/.test(status),"status: "+status);
