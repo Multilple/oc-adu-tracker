@@ -30,13 +30,13 @@ A nonprofit project manager can use the same page to screen lots before paying f
 One page, three steps:
 
 1. **Pick a plan.** All 10 of Santa Ana's pre-approved designs (3 studios, 6 one-bedroom, 1 two-bedroom).
-2. **Place it.** Either on a sample yard, or on real Esri satellite imagery: search a street or
-   intersection, click the lot corners, click the house corners, then drag and turn the ADU.
+2. **Place it.** On real Esri satellite imagery: search a street or intersection, click the lot
+   corners, click the house corners, then drag and turn the ADU.
 3. **Result.** Green "Fits our basic checks" or red "Doesn't fit yet" with the reason (for example
    "Only 3.5 ft from a lot line"). The page lists what it checks and what it doesn't.
 
-A "Why it matters" box shows the 30 days saved and what that waiting costs at an editable monthly
-carrying cost.
+A "Why it matters" box shows the 30 days saved and, once you enter your own monthly carrying cost,
+what that waiting costs you.
 
 `full.html` is a bigger earlier prototype covering all 34 OC cities. It is the vision for scale,
 not the demo.
@@ -78,7 +78,7 @@ Run it locally (no install needed to view):
 ```bash
 git clone https://github.com/Multilple/oc-adu-tracker
 cd oc-adu-tracker
-# open index.html in any browser. The satellite map needs internet; the sample yard works offline.
+# open index.html in any browser (the satellite map needs internet).
 ```
 
 Rebuild and test (needs Python 3 and Node 18 or newer; jsdom is pinned in `package-lock.json`):
@@ -86,58 +86,57 @@ Rebuild and test (needs Python 3 and Node 18 or newer; jsdom is pinned in `packa
 ```bash
 npm install
 npm run build   # builds index.html and full.html from src/
-npm test        # headless checks: 10 plans, sample-yard and map fit checks, URL params
+npm test        # headless checks: 10 plans and their sizes, map fit checks, URL params, Site Finder handoff
 ```
 
 No API keys or environment variables.
 
-## Sources and assumptions
+## Sources
 
-| Item | Source or assumption | Date checked |
+| Item | Source | Date checked |
 |---|---|---|
-| Santa Ana's 10 plans: names, designers, thumbnails | [Santa Ana pre-approved ADU plans page](https://santa-ana.gov/pre-approved-adu-plans/) | 2026-11-07 |
-| Studio size 399 sq ft, JGA Craftsman 677 sq ft | Santa Ana plan titles (only sizes the city lists) | 2026-11-07 |
-| Santa Ana designs range 399 to 749 sq ft | Santa Ana plans page | 2026-11-07 |
+| Santa Ana's 10 plans: names, designers, thumbnails | [Santa Ana pre-approved ADU plans page](https://www.santa-ana.org/pre-approved-adu-plans) | 2026-11-07 |
+| Square footage of all 10 plans | Title sheet of each plan set (T1.1 / TS-1), downloaded from the page above | 2026-11-08 |
+| Footprints (outside of walls, porch not included) | Floor plan sheet of each plan set (A1.0 / A1.1 / A1.3 / A1.5), see table below | 2026-11-08 |
 | Pre-approved plan program required; 30-day decision clock | AB 1332, Gov Code 65852.27 ([SANDAG summary](https://www.sandag.org/projects-and-programs/regional-initiatives/housing-and-land-use/housing-acceleration-program/-/media/CF0D23A5205A44ABAEA8A4A8BAE45141.ashx)) | 2026-11-07 |
 | 60-day standard ADU decision clock | Gov Code 66317 (state ADU law) | 2026-11-07 |
-| 4 ft max side and rear setback | State ADU law, [HCD ADU Handbook](https://www.hcd.ca.gov/sites/default/files/docs/policy-and-research/adu-handbook-update.pdf) | 2026-11-07 |
+| 4 ft side and rear setback | State ADU law, [HCD ADU Handbook](https://www.hcd.ca.gov/sites/default/files/docs/policy-and-research/adu-handbook-update.pdf); Santa Ana Table 41-194.3 | 2026-11-07 |
+| 15 ft house separation, reducible for ADUs up to 800 sq ft; 5 ft from other accessory buildings (Site Finder fill spacing) | Santa Ana Municipal Code Table 41-194.3 ([ordinance text](https://cc-publicdocs.santa-ana.org/WebLink/1/doc/135024/Page5.aspx)) | 2026-11-08 |
 | 9 of 34 OC cities post usable plans | Our city-by-city check, `data/preapproved-adu.json` | 2026-11-07 |
 | Satellite imagery | Esri World Imagery | live |
-| Footprint shapes: studios 16 × 25 ft, Craftsman 21 × 32, other 1BR 20 × 30, 2BR 24 × 30 | ASSUMPTION (the city doesn't publish footprints; you can type the real one from the plan sheet) | |
-| 6 of 10 plan sizes | Unknown. Shown as "Size not listed" | |
-| $3,000 per month carrying cost (loan, tax, insurance while waiting) | ASSUMPTION, editable on the page | |
-| Saved ≈ monthly cost × 30 / 30.4, so about $2,961 at $3,000 | Math on the ASSUMPTION above | |
-| Sample yard: 50 × 110 ft lot, 36 × 45 ft house | ASSUMPTION (made-up lot, not a real address) | |
-| 364,000 ft per degree of latitude (times cos(latitude) for longitude) | ASSUMPTION, close enough for one backyard | |
+| Feet per degree at the lot's latitude | WGS84 ellipsoid series (exact to well under 0.1% at Santa Ana) | |
 
-Every number we made up is labelled ASSUMPTION here and in the tool.
+### Plan footprints
 
-## What is real and what is mocked
+| Plan | Designer | Sq ft | Footprint | Sheet |
+|---|---|---|---|---|
+| Studio (Ranch, Spanish, Traditional) | Design Path Studio | 399 | 17′-0″ × 22′-8″ | A1.1 / A1.3 / A1.5 |
+| 1 Bedroom (Ranch, Spanish, Traditional) | Design Path Studio | 499 | 16′-4″ × 30′-1″ | A1.1 / A1.3 / A1.5 |
+| 1 Bedroom Contemporary | Design Path Studio | 625 | 16′-10″ × 36′-7″ | A1.1 |
+| 2 Bedroom Contemporary | Design Path Studio | 749 | 16′-10″ × 43′-10″ | A1.1 |
+| 1 Bedroom Craftsman | James Gartner & Associates | 677 | 25′-0″ × 28′-0″ | A1.0 |
+| 1 Bedroom Spanish | James Gartner & Associates | 677 | 25′-0″ × 34′-0″ overall (L-shaped) | A1.0 |
 
-| Part | Status |
-|---|---|
-| Santa Ana's 10 plans, names, designers, images | Working, real |
-| Plan sizes | Real for 3 studios and the Craftsman; "Size not listed" for the other 6 |
-| Plan footprint shapes | Mocked (ASSUMPTION), user can enter real ones |
-| Satellite map, address search, lot and house tracing | Working, real imagery |
-| Setback and house-overlap check | Working (side and rear 4 ft only) |
-| Sample yard | Mocked lot |
-| Carrying cost | Mocked (ASSUMPTION), editable |
-| 34-city program data | Real, checked by hand from city sites |
+Optional porches (Design Path Studio "+ Porch" sheets, JGA open porches) add to these. The JGA
+Spanish cover sheet lists 677 sq ft, the same as the Craftsman, even though its bedroom wing makes
+it larger; the page shows the cover sheet number. In the 2 Bedroom ZIP, sheet A1.1 is saved under
+the file name `01-AS.1 Site Information.pdf`.
+
+The one thing the page can't know is your monthly carrying cost, so it starts empty and you enter it.
 
 ## Where it gets things wrong
 
 - Lot lines are traced by eye from imagery, so distances are rough (a foot or two).
-- It does not check the front setback, easements, utilities, flood zone, historic district, height,
-  max square footage or building separation from the house (it only checks for overlap).
-- Footprints are assumed for every plan until someone types in the plan sheet's real size.
+- It does not check the front setback, easements, utilities, flood zone, historic district, height
+  or max square footage. For the house it checks overlap only, since Santa Ana's 15 ft separation can
+  be reduced for ADUs up to 800 sq ft (all 10 designs).
+- Footprints are rectangles; the JGA Spanish plan is L-shaped, so it is checked as its overall box.
 - Dragging works with a mouse or trackpad, not touch.
 - Lots with an inward corner (concave) get no dashed setback line, though the check still runs.
 - Green means it passes our basic checks, not that the city will approve it. Not legal advice.
 
 ## Next steps
 
-- Read the real footprints from Santa Ana's plan sheets (needs the PDFs from the city).
 - Add the other 8 OC cities that post plans; the data is already in `data/preapproved-adu.json`.
 - Export a draft site plan the homeowner can bring to the counter.
 - A city-side view showing which cities comply with AB 1332.

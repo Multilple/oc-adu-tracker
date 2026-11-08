@@ -2,7 +2,7 @@
 <!-- Handoff contract between OC Site Finder (site-finder/index.html) and Backyard Fit (this page, built from src/santa-ana.html):
      Site Finder -> Backyard Fit: index.html?site=<id>&name=<site name>&lat=<lat>&lng=<lng>&z=19&lot=<lng,lat;lng,lat;...>
        lot = the site's outline ring (D.sites[].outline.coordinates[0]) as lng,lat pairs, 6 decimals, ";" between points.
-       A valid lot opens the Satellite tab with that outline already drawn as the traced lot. Missing or bad params: page behaves as before.
+       A valid lot opens the map with that outline already drawn as the traced lot. Missing or bad params: page behaves as before.
      Backyard Fit -> Site Finder: site-finder/#site=<id> reselects and flies to that site. -->
 <html lang="en">
 <head>
@@ -41,7 +41,7 @@ h1{margin:0;font-size:28px}
 ul{margin:4px 0 0;padding-left:20px}li{margin:3px 0}
 #yard{display:block;margin:0 auto;width:auto;max-width:100%;height:calc(100vh - 250px);min-height:420px;touch-action:none;user-select:none}
 #adu{cursor:grab}#adu:active{cursor:grabbing}
-#mapWrap{position:relative;display:none}
+#mapWrap{position:relative}
 #map{height:calc(100vh - 250px);min-height:420px;border-radius:8px}
 #blocked{display:none;position:absolute;inset:0;z-index:1000;background:color-mix(in srgb,var(--bg) 96%,transparent);border-radius:8px;padding:28px;text-align:center;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 .leaflet-interactive.aduShape{cursor:grab}
@@ -72,31 +72,20 @@ a{color:var(--accent)}
 <section class="box">
   <div class="step">Step 1 · Pick one of Santa Ana's 10 pre-approved designs</div>
   <div class="groups" id="groups"></div>
-  <div class="row"><span class="muted">Have the plan sheet? Enter its real footprint:</span><input id="cw" type="number" min="1" value="20"> × <input id="cl" type="number" min="1" value="30"> ft <button class="btn" id="custom">Use this size</button></div>
-  <div class="assume" style="margin-top:6px">Square footage is shown only where Santa Ana's plan title gives it (studios 399 sq ft, JGA Craftsman 677 sq ft). Santa Ana's designs range from 399 to 749 sq ft. Every footprint shape (width × length) is ASSUMED until checked against the plan sheet.</div>
+  <div class="row"><span class="muted">Using a different plan? Enter its footprint:</span><input id="cw" type="number" min="1" placeholder="width"> × <input id="cl" type="number" min="1" placeholder="length"> ft <button class="btn" id="custom">Use this size</button></div>
+  <div class="muted" style="margin-top:6px">Sizes and footprints come from each plan set's title sheet and floor plan sheet. Footprints are the outside of the walls and leave out the optional porch.</div>
 </section>
 
 <div class="wrap" id="work">
   <div class="box">
-    <div class="step">Step 2 · Place it in a yard</div>
+    <div class="step">Step 2 · Place it on your lot</div>
     <div class="placing" id="placing"></div>
-    <div class="tabs"><button id="tSample" class="on">Sample yard</button><button id="tMap">Satellite map</button></div>
-
-    <div id="sampleWrap">
-      <svg id="yard" viewBox="0 0 330 600" aria-label="Sample backyard"></svg>
-      <div class="row">
-        <button class="btn" id="rotate">Rotate 90°</button>
-        <button class="btn" id="reset">Reset</button>
-        <span class="muted">Made-up lot: 50 × 110 ft. House: 36 × 45 ft. Grid squares are 5 ft. Drag the ADU.</span>
-      </div>
-    </div>
-
     <div id="mapWrap">
       <div id="fromSite" class="muted" style="display:none;margin:0 0 8px;font-size:14px"></div>
       <div class="row" style="margin:0 0 8px"><input id="addr" style="width:260px" placeholder="Street or intersection in Santa Ana"><button class="btn" id="find">Go</button><span class="muted">Use a street or intersection, not someone's home address.</span></div>
       <div style="position:relative">
         <div id="map"></div>
-        <div id="blocked"><div style="font-size:18px;font-weight:700;margin-bottom:8px">Satellite tiles can't load in this preview.</div><div class="muted" style="margin-bottom:14px">This page is sandboxed. The same page with live satellite imagery is on the project site.</div><a class="btn go" id="liveLink" target="_blank" rel="noopener" href="https://multilple.github.io/oc-adu-tracker/" style="text-decoration:none;display:inline-block;margin-bottom:6px">Open the live map version</a><button class="btn" id="backSample">Use the sample yard</button></div>
+        <div id="blocked"><div style="font-size:18px;font-weight:700;margin-bottom:8px">Satellite tiles can't load in this preview.</div><div class="muted" style="margin-bottom:14px">This page is sandboxed. The same page with live satellite imagery is on the project site.</div><a class="btn go" id="liveLink" target="_blank" rel="noopener" href="https://multilple.github.io/oc-adu-tracker/" style="text-decoration:none;display:inline-block;margin-bottom:6px">Open the live map version</a></div>
       </div>
       <div class="row">
         <button class="btn go" id="traceLot">Trace the lot</button>
@@ -113,21 +102,20 @@ a{color:var(--accent)}
       <div class="step">Step 3 · Result</div>
       <div id="status" class="status ok">Fits</div>
       <ul id="why"></ul>
-      <div class="muted" style="margin-top:8px">Checked: inside the lot, at least 4 ft from the side and back lot lines, not touching the house.<br>Not checked: front setback, easements, utilities, flood zone, historic district.</div>
+      <div class="muted" style="margin-top:8px">Checked: inside the lot, at least 4 ft from the side and back lot lines, not touching the house.<br>Santa Ana's 15 ft house separation (Table 41-194.3) can be reduced for ADUs up to 800 sq ft, which covers all 10 designs.<br>Not checked: front setback, easements, utilities, flood zone, historic district.</div>
     </div>
     <div class="box">
       <div class="step">Why it matters</div>
       <div class="big">30 days</div>
       <div>City review deadline when you use a pre-approved design, instead of the usual 60.</div>
-      <div class="row"><span class="muted">Monthly carrying cost $</span><input id="carry" type="number" value="3000" style="width:90px"></div>
-      <div class="assume">ASSUMPTION: swap in real loan, tax and insurance costs.</div>
+      <div class="row"><span class="muted">Your monthly carrying cost (loan, tax, insurance) $</span><input id="carry" type="number" min="0" placeholder="e.g. your mortgage" style="width:150px"></div>
       <div style="font-size:18px;font-weight:700;margin-top:6px" id="saved"></div>
     </div>
   </div>
 </div>
 </main>
 <footer>
-<b>Sources.</b> Plan names, designers, images and the sizes shown come from Santa Ana's pre-approved ADU plans page (<a href="https://santa-ana.gov/pre-approved-adu-plans/">santa-ana.gov/pre-approved-adu-plans</a>), captured Nov 7, 2026. Designs by Design Path Studio and James Gartner &amp; Associates.
+<b>Sources.</b> Plan names, designers and images come from Santa Ana's pre-approved ADU plans page (<a href="https://www.santa-ana.org/pre-approved-adu-plans">santa-ana.org/pre-approved-adu-plans</a>). Square footage and footprints come from the plan sets downloaded there on Nov 8, 2026 (title sheet and floor plan sheet of each). Designs by Design Path Studio and James Gartner &amp; Associates.
 30-day clock for pre-approved plans: AB 1332, Gov Code 65852.27 (<a href="https://www.sandag.org/projects-and-programs/regional-initiatives/housing-and-land-use/housing-acceleration-program/-/media/CF0D23A5205A44ABAEA8A4A8BAE45141.ashx">SANDAG summary</a>). 60-day clock and 4 ft side/rear setback: state ADU law, Gov Code 66310–66342 (<a href="https://www.hcd.ca.gov/sites/default/files/docs/policy-and-research/adu-handbook-update.pdf">HCD ADU Handbook</a>).
 Satellite imagery © Esri. "9 of 34 cities": our check of every OC city's website on Nov 7, 2026 (<a href="https://github.com/Multilple/oc-adu-tracker">data</a>). Built at Claude Impact Lab UCI. MIT license.
 </footer>
@@ -135,19 +123,21 @@ Satellite imagery © Esri. "9 of 34 cities": our check of every OC city's websit
 <script>
 const THUMBS=/*THUMBS*/{};
 const DPS="Design Path Studio",JGA="James Gartner & Associates";
-// sf: only where the city's plan title states it. w×l: ASSUMED footprint shape.
+// sf and footprint (outside face of walls, ft) from each plan set's title sheet and floor plan sheet,
+// downloaded from santa-ana.org/pre-approved-adu-plans on Nov 8, 2026. Optional porches are not included.
 const PLANS=[
- {id:"sa-st-ranch",bed:"Studio",style:"Ranch",by:DPS,sf:399,w:16,l:25},
- {id:"sa-st-spanish",bed:"Studio",style:"Spanish",by:DPS,sf:399,w:16,l:25},
- {id:"sa-st-trad",bed:"Studio",style:"Traditional",by:DPS,sf:399,w:16,l:25},
- {id:"sa-1b-ranch",bed:"1 Bedroom",style:"Ranch",by:DPS,sf:null,w:20,l:30},
- {id:"sa-1b-spanish",bed:"1 Bedroom",style:"Spanish",by:DPS,sf:null,w:20,l:30},
- {id:"sa-1b-trad",bed:"1 Bedroom",style:"Traditional",by:DPS,sf:null,w:20,l:30},
- {id:"sa-1b-contemp",bed:"1 Bedroom",style:"Contemporary",by:DPS,sf:null,w:20,l:30},
- {id:"sa-1b-craftsman",bed:"1 Bedroom",style:"Craftsman",by:JGA,sf:677,w:21,l:32},
- {id:"sa-1b-jga-spanish",bed:"1 Bedroom",style:"Spanish",by:JGA,sf:null,w:20,l:30},
- {id:"sa-2b-contemp",bed:"2 Bedroom",style:"Contemporary",by:DPS,sf:null,w:24,l:30},
+ {id:"sa-st-ranch",bed:"Studio",style:"Ranch",by:DPS,sf:399,w:17,l:22+8/12,sheet:"A1.1"},
+ {id:"sa-st-spanish",bed:"Studio",style:"Spanish",by:DPS,sf:399,w:17,l:22+8/12,sheet:"A1.3"},
+ {id:"sa-st-trad",bed:"Studio",style:"Traditional",by:DPS,sf:399,w:17,l:22+8/12,sheet:"A1.5"},
+ {id:"sa-1b-ranch",bed:"1 Bedroom",style:"Ranch",by:DPS,sf:499,w:16+4/12,l:30+1/12,sheet:"A1.1"},
+ {id:"sa-1b-spanish",bed:"1 Bedroom",style:"Spanish",by:DPS,sf:499,w:16+4/12,l:30+1/12,sheet:"A1.3"},
+ {id:"sa-1b-trad",bed:"1 Bedroom",style:"Traditional",by:DPS,sf:499,w:16+4/12,l:30+1/12,sheet:"A1.5"},
+ {id:"sa-1b-contemp",bed:"1 Bedroom",style:"Contemporary",by:DPS,sf:625,w:16+10/12,l:36+7/12,sheet:"A1.1"},
+ {id:"sa-1b-craftsman",bed:"1 Bedroom",style:"Craftsman",by:JGA,sf:677,w:25,l:28,sheet:"A1.0"},
+ {id:"sa-1b-jga-spanish",bed:"1 Bedroom",style:"Spanish",by:JGA,sf:677,w:25,l:34,sheet:"A1.0",note:"L-shaped; this is the overall box"},
+ {id:"sa-2b-contemp",bed:"2 Bedroom",style:"Contemporary",by:DPS,sf:749,w:16+10/12,l:43+10/12,sheet:"A1.1"},
 ];
+const fi=ft=>{const t=Math.round(ft*12),f=Math.floor(t/12),i=t%12;return i?`${f}′-${i}″`:`${f}′`};
 const $=id=>document.getElementById(id);
 (function(){const root=document.documentElement,b=$("theme"),KEY="oc-theme";
  const cur=()=>root.dataset.theme||(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
@@ -156,21 +146,21 @@ const $=id=>document.getElementById(id);
  apply(saved==="dark"||saved==="light"?saved:null);
  b.onclick=()=>{const t=cur()==="dark"?"light":"dark";apply(t);try{localStorage.setItem(KEY,t)}catch(e){}};
 })();
-let plan=PLANS[7], mode="sample";
+let plan=PLANS[7];
 
 /* ---------- step 1: plan picker ---------- */
 function renderPlans(){
  const beds=["Studio","1 Bedroom","2 Bedroom"];
  $("groups").innerHTML=beds.map(b=>{const ps=PLANS.filter(p=>p.bed===b);
-  return `<div class="grp"><h3>${b} · ${ps.length} design${ps.length>1?"s":""}</h3><div class="grid">${ps.map(p=>`<button class="plan${p===plan?" on":""}" data-id="${p.id}">${THUMBS[p.id]?`<img alt="${b} ${p.style} rendering" src="${THUMBS[p.id]}">`:""}<div class="t"><b>${p.style}</b><br><span class="muted">${p.by}</span><br>${p.sf?`<span class="sf">${p.sf} sq ft</span>`:`<span class="unk">Size not listed</span>`}</div></button>`).join("")}</div></div>`}).join("");
+  return `<div class="grp"><h3>${b} · ${ps.length} design${ps.length>1?"s":""}</h3><div class="grid">${ps.map(p=>`<button class="plan${p===plan?" on":""}" data-id="${p.id}">${THUMBS[p.id]?`<img alt="${b} ${p.style} rendering" src="${THUMBS[p.id]}">`:""}<div class="t"><b>${p.style}</b><br><span class="muted">${p.by}</span><br><span class="sf">${p.sf} sq ft</span><br><span class="muted">${fi(p.w)} × ${fi(p.l)}</span></div></button>`).join("")}</div></div>`}).join("");
  document.querySelectorAll(".plan").forEach(b=>b.onclick=()=>{pick(PLANS.find(p=>p.id===b.dataset.id));$("work").scrollIntoView({behavior:"smooth",block:"start"})});
 }
 function placingText(){
- const p=plan,size=p.sf?`${p.sf} sq ft`:(p.custom?`${p.w*p.l} sq ft`:"size not listed");
- const shape=p.custom?`${p.w} × ${p.l} ft (entered by you)`:`${p.w} × ${p.l} ft footprint <span class="assume">ASSUMED${p.sf?"":", type the real size above"}</span>`;
+ const p=plan,size=p.sf?`${p.sf} sq ft`:`${Math.round(p.w*p.l)} sq ft`;
+ const shape=p.custom?`${p.w} × ${p.l} ft (entered by you)`:`${fi(p.w)} × ${fi(p.l)} footprint (plan sheet ${p.sheet}${p.note?"; "+p.note:""})`;
  $("placing").innerHTML=`Placing: <b>${p.custom?"Custom size":p.bed+" "+p.style}</b> · ${size} · ${shape}`;
 }
-function pick(p){plan=p;sq.w=p.w;sq.l=p.l;sq.x=Math.max(0,Math.min(sq.x,LOT.w-sq.w));mp.w=p.w;mp.l=p.l;renderPlans();placingText();draw()}
+function pick(p){plan=p;mp.w=p.w;mp.l=p.l;renderPlans();placingText();draw()}
 $("custom").onclick=()=>{const w=+$("cw").value,l=+$("cl").value;if(w>0&&l>0)pick({id:"custom",custom:true,bed:"",style:"Custom",by:"",sf:null,w,l})};
 
 /* ---------- step 3 output ---------- */
@@ -180,61 +170,18 @@ function show(res){
  else{st.className="status "+(res.ok?"ok":"bad");st.textContent=res.ok?"✓ Fits our basic checks":"✗ Doesn't fit yet"}
  $("why").innerHTML=res.lines.map(t=>`<li>${t}</li>`).join("");
 }
-function draw(){mode==="sample"?drawSample():drawMap()}
+function draw(){drawMap()}
 
-/* ---------- sample yard (pure SVG, feet) ---------- */
-const LOT={w:50,l:110}, HOUSE={x:7,y:55,w:36,l:45}, SET=4; // y=0 is the back lot line, street at the bottom
-const S=5, PAD=15;
-let sq={x:15,y:10,w:plan.w,l:plan.l};
-$("rotate").onclick=()=>{[sq.w,sq.l]=[sq.l,sq.w];draw()};
-$("reset").onclick=()=>{sq={x:15,y:10,w:plan.w,l:plan.l};draw()};
-function checkSample(){
- const r=[],a=sq,h=HOUSE;
- const left=a.x,right=LOT.w-(a.x+a.w),back=a.y,front=LOT.l-(a.y+a.l);
- if(left<0||right<0||back<0||front<0)r.push("Part of it is outside the lot.");
- else{
-  if(left<SET)r.push(`Only ${left.toFixed(1)} ft from the left lot line (needs 4).`);
-  if(right<SET)r.push(`Only ${right.toFixed(1)} ft from the right lot line (needs 4).`);
-  if(back<SET)r.push(`Only ${back.toFixed(1)} ft from the back lot line (needs 4).`);
- }
- const hit=a.x<h.x+h.w&&a.x+a.w>h.x&&a.y<h.y+h.l&&a.y+a.l>h.y;
- if(hit)r.push("It overlaps the house.");
- const gap=Math.max(h.y-(a.y+a.l),a.y-(h.y+h.l),h.x-(a.x+a.w),a.x-(h.x+h.w));
- const ok=r.length===0;
- return {ok,lines:ok?[`${Math.min(left,right).toFixed(1)} ft from the nearest side lot line.`,`${back.toFixed(1)} ft from the back lot line.`,`${gap.toFixed(1)} ft from the house.`]:r};
-}
-const X=ft=>PAD+ft*S, Y=ft=>PAD+ft*S;
-function drawSample(){
- const c=checkSample(),col=c.ok?"#2e7d4f":"#b3402f";
- let g="";for(let x=0;x<=LOT.w;x+=5)g+=`<line x1="${X(x)}" y1="${Y(0)}" x2="${X(x)}" y2="${Y(LOT.l)}" stroke="#eceae3"/>`;
- for(let y=0;y<=LOT.l;y+=5)g+=`<line x1="${X(0)}" y1="${Y(y)}" x2="${X(LOT.w)}" y2="${Y(y)}" stroke="#eceae3"/>`;
- $("yard").innerHTML=`
- <rect x="${X(0)}" y="${Y(0)}" width="${LOT.w*S}" height="${LOT.l*S}" fill="#fbfaf7"/>${g}
- <rect x="${X(0)}" y="${Y(0)}" width="${LOT.w*S}" height="${LOT.l*S}" fill="none" stroke="#1d1d1b" stroke-width="2"/>
- <path d="M${X(SET)} ${Y(LOT.l)} V${Y(SET)} H${X(LOT.w-SET)} V${Y(LOT.l)}" fill="none" stroke="#2e7d4f" stroke-width="1.5" stroke-dasharray="5 4"/>
- <text x="${X(LOT.w/2)}" y="${Y(SET)+12}" font-size="10" fill="#2e7d4f" text-anchor="middle">4 ft setback line</text>
- <rect x="${X(HOUSE.x)}" y="${Y(HOUSE.y)}" width="${HOUSE.w*S}" height="${HOUSE.l*S}" fill="#cfcdc6" stroke="#6b6a65"/>
- <text x="${X(HOUSE.x+HOUSE.w/2)}" y="${Y(HOUSE.y+HOUSE.l/2)}" font-size="14" text-anchor="middle" fill="#3a3a37">House</text>
- <rect x="${X(-3)}" y="${Y(LOT.l)+4}" width="${(LOT.w+6)*S}" height="20" fill="#1d1d1b"/>
- <text x="${X(LOT.w/2)}" y="${Y(LOT.l)+18}" font-size="11" fill="#fff" text-anchor="middle">STREET (front setback: check city rules)</text>
- <g id="adu"><rect x="${X(sq.x)}" y="${Y(sq.y)}" width="${sq.w*S}" height="${sq.l*S}" rx="2" fill="${col}" fill-opacity=".35" stroke="${col}" stroke-width="3"/>
- <text x="${X(sq.x+sq.w/2)}" y="${Y(sq.y+sq.l/2)-4}" font-size="13" font-weight="700" text-anchor="middle" fill="#1d1d1b">ADU</text>
- <text x="${X(sq.x+sq.w/2)}" y="${Y(sq.y+sq.l/2)+12}" font-size="10" text-anchor="middle" fill="#1d1d1b">${sq.w} × ${sq.l} ft</text></g>`;
- $("adu").addEventListener("pointerdown",start);
- show(c);
-}
-let sdrag=null;
-function pt(e){const s=$("yard"),p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(s.getScreenCTM().inverse());return {x:(q.x-PAD)/S,y:(q.y-PAD)/S}}
-function start(e){e.preventDefault();const p=pt(e);sdrag={dx:p.x-sq.x,dy:p.y-sq.y};$("yard").setPointerCapture(e.pointerId)}
-$("yard").addEventListener("pointermove",e=>{if(!sdrag)return;const p=pt(e);sq.x=Math.round((p.x-sdrag.dx)*2)/2;sq.y=Math.round((p.y-sdrag.dy)*2)/2;draw()});
-$("yard").addEventListener("pointerup",()=>sdrag=null);
+const SET=4; // ft from side and rear lot lines (state ADU law; Santa Ana Table 41-194.3)
 
 /* ---------- satellite map (Leaflet + Esri; all math in feet) ---------- */
-const FT_PER_DEG=364000;
 let map=null,sat=null,tileErr=0,tileOk=0,origin=null,lot=[],house=[],tracing=null,temp=[],layers={},mp={cx:0,cy:0,w:plan.w,l:plan.l,rot:0},mdrag=null;
-const cosO=()=>Math.cos(origin.lat*Math.PI/180);
-const toFt=ll=>({x:(ll.lng-origin.lng)*FT_PER_DEG*cosO(),y:(ll.lat-origin.lat)*FT_PER_DEG});
-const toLL=p=>L.latLng(origin.lat+p.y/FT_PER_DEG,origin.lng+p.x/(FT_PER_DEG*cosO()));
+// feet per degree at the lot's latitude (WGS84 ellipsoid series)
+const FT_M=1/0.3048,radO=()=>origin.lat*Math.PI/180;
+const ftLat=()=>(111132.92-559.82*Math.cos(2*radO())+1.175*Math.cos(4*radO()))*FT_M;
+const ftLng=()=>(111412.84*Math.cos(radO())-93.5*Math.cos(3*radO()))*FT_M;
+const toFt=ll=>({x:(ll.lng-origin.lng)*ftLng(),y:(ll.lat-origin.lat)*ftLat()});
+const toLL=p=>L.latLng(origin.lat+p.y/ftLat(),origin.lng+p.x/ftLng());
 function aduPoly(){const {cx,cy,w,l,rot}=mp,a=rot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
  return [[-w/2,-l/2],[w/2,-l/2],[w/2,l/2],[-w/2,l/2]].map(([x,y])=>({x:cx+x*c-y*s,y:cy+x*s+y*c}))}
 function inPoly(p,P){let ins=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const a=P[i],b=P[j];if((a.y>p.y)!==(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x)ins=!ins}return ins}
@@ -326,19 +273,10 @@ $("find").onclick=async()=>{
  }catch(e){$("mapNote").textContent="Search is blocked here. Pan and zoom the map instead."}
 };
 
-/* ---------- tabs ---------- */
-function setMode(m){
- mode=m;$("tSample").classList.toggle("on",m==="sample");$("tMap").classList.toggle("on",m==="map");
- $("sampleWrap").style.display=m==="sample"?"":"none";$("mapWrap").style.display=m==="map"?"block":"none";
- if(m==="map"){initMap();setTimeout(()=>map.invalidateSize(),0)}
- draw();
-}
-$("tSample").onclick=()=>setMode("sample");$("tMap").onclick=()=>setMode("map");$("backSample").onclick=()=>setMode("sample");
-
-function saved(){const c=+$("carry").value||0;$("saved").textContent=`≈ $${Math.round(c*30/30.4).toLocaleString()} less spent waiting`}
+function saved(){const c=+$("carry").value;$("saved").textContent=c>0?`≈ $${Math.round(c*30/30.4).toLocaleString()} less spent waiting (30 days × your monthly cost)`:"Enter your monthly cost to see what 30 fewer days saves."}
 $("carry").oninput=saved;
-renderPlans();placingText();draw();saved();
-if(START)setMode("map");
+renderPlans();placingText();saved();
+initMap();setTimeout(()=>map&&map.invalidateSize(),0);draw();
 </script>
 </body>
 </html>
